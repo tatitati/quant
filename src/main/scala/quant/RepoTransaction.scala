@@ -6,9 +6,14 @@ import cats.data._
 import cats.effect._
 import cats.implicits._
 import scala.util.{Success, Try}
+import cats.syntax.either._
 
 object RepoTransaction {
-  def findAll(resourceFilename: String): IO[Either[ErrorRead, List[Transaction]]] = IO {
+
+  type listTransaction = List[Transaction]
+  type dayMapTotal = Map[Int, Double]
+
+  def findAll(resourceFilename: String): IO[Either[ErrorRead, listTransaction]] = IO {
     val file = getClass.getResource(resourceFilename)
 
     val transactions: Try[List[Transaction]] = Try {
@@ -20,9 +25,20 @@ object RepoTransaction {
 
     transactions match {
       case Success(transactions) => transactions.asRight[ErrorRead]
-      case _ => FileDontExist.asLeft[List[Transaction]]
+      case _ => FileDontExist.asLeft[listTransaction]
     }
   }
 
-//  def findTotalByDay(resourceFile: String): IO[Either[ErrorRead, Map]]
+  def findTotalByDay(resourceFilename: String): IO[Either[ErrorRead, dayMapTotal]] = {
+    val result: IO[Either[ErrorRead, listTransaction]] = RepoTransaction.findAll("/transactions.txt")
+
+    result.map{
+      case Left(error) => Either.left(error)
+      case Right(listTransaction) => Either.right(
+        listTransaction
+          .groupBy(_.transactionDay)
+          .mapValues(_.map(_.transactionAmount).sum)
+      )
+    }
+  }
 }

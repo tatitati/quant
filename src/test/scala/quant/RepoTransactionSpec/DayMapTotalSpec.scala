@@ -1,7 +1,9 @@
 package quant.RepoTransactionSpec
 
+import cats.effect.IO
 import org.scalatest.FunSuite
-import quant.Transaction
+import quant.RepoTransaction.listTransaction
+import quant.{ErrorRead, FileDontExist, RepoTransaction, Transaction}
 
 class DayMapTotalSpec extends FunSuite {
 
@@ -23,5 +25,23 @@ class DayMapTotalSpec extends FunSuite {
         5 -> List(Transaction("T000622","A45",5,"CC",62.03), Transaction("T000625","A26",5,"DD",114.63))
       ) == grouped
     )
+  }
+
+  test("can group read transactions") {
+    import cats.syntax.either._
+
+    type dayMapTotal = Map[Int, Double]
+    val result: IO[Either[ErrorRead, listTransaction]] = RepoTransaction.findAll("/transactions.txt")
+
+    val mapped: IO[Either[ErrorRead, dayMapTotal]]  = result.map{
+      case Left(error) => Either.left(error)
+      case Right(listTransaction) => Either.right(
+        listTransaction
+          .groupBy(_.transactionDay)
+          .mapValues(_.map(_.transactionAmount).sum)
+      )
+    }
+
+    println(mapped.unsafeRunSync())
   }
 }

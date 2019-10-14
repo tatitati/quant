@@ -2,7 +2,6 @@ package quant.RepoTransactionSpec
 
 import org.scalatest.FunSuite
 import quant.RepoTransaction
-
 import scala.io.Source
 
 class FindAllSpec extends FunSuite {
