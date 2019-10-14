@@ -30,6 +30,13 @@ class DayMapTotalSpec extends FunSuite {
   test("can group read transactions") {
     val result = RepoTransaction.findTotalByDay("/transactions.txt")
 
-    println(result.unsafeRunSync())
+    val dayMapTotal = result.unsafeRunSync()
+
+    assert(dayMapTotal.isRight)
+
+    val listPairs = dayMapTotal.right.get
+
+    assert(listPairs.isInstanceOf[Map[_, _]], "there should be totals for 29 days")
+    assert(29 == listPairs.size, "there should be totals for 29 days")
   }
 }
