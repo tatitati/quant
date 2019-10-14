@@ -1,10 +1,11 @@
-package quant
+package quant.RepoTransactionSpec
 
 import org.scalatest.FunSuite
+import quant.RepoTransaction
 
 import scala.io.Source
 
-class RepoTransactionsSpec extends FunSuite {
+class FindAllSpec extends FunSuite {
 
   test("can get URL of real file") {
     val file = getClass.getResource("/transactions.txt")

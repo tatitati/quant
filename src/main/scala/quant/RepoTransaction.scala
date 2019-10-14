@@ -1,19 +1,17 @@
 package quant
 
 import cats.effect.IO
-
 import scala.io.Source
 import cats.data._
 import cats.effect._
 import cats.implicits._
-
 import scala.util.{Success, Try}
 
 object RepoTransaction {
   def findAll(resourceFilename: String): IO[Either[ErrorRead, List[Transaction]]] = IO {
     val file = getClass.getResource(resourceFilename)
 
-    val transactions: Try[List[Transaction]] = Try{
+    val transactions: Try[List[Transaction]] = Try {
       for {
         line <-  Source.fromFile(file.getPath).getLines().drop(1).toList
         fields = line.split(',')
