@@ -23,4 +23,6 @@ object RepoTransaction {
       case _ => FileDontExist.asLeft[List[Transaction]]
     }
   }
+
+//  def findTotalByDay(resourceFile: String): IO[Either[ErrorRead, Map]]
 }
