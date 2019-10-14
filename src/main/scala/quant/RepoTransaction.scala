@@ -11,6 +11,7 @@ object RepoTransaction {
 
   type listTransaction = List[Transaction]
   type dayMapTotal = Map[Int, Double]
+  type accountMapAvg = Map[String, Double]
 
   def findAll(resourceFilename: String): IO[Either[ErrorRead, listTransaction]] = IO {
     val file = getClass.getResource(resourceFilename)
@@ -36,6 +37,19 @@ object RepoTransaction {
       case Right(listTransaction) => Either.right(
         listTransaction
           .groupBy(_.transactionDay)
+          .mapValues(_.map(_.transactionAmount).sum)
+      )
+    }
+  }
+
+  def accountMapAvg(resourceFilename: String): IO[Either[ErrorRead, accountMapAvg]] = {
+    val result: IO[Either[ErrorRead, listTransaction]] = RepoTransaction.findAll(resourceFilename)
+
+    result.map{
+      case Left(error) => Either.left(error)
+      case Right(listTransaction) => Either.right(
+        listTransaction
+          .groupBy(_.accountId)
           .mapValues(_.map(_.transactionAmount).sum)
       )
     }
