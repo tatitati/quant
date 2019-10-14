@@ -21,4 +21,17 @@ class RepoTransactionsSpec extends FunSuite {
     assert(991 == transactionslines.length)
     assert("T0001,A27,1,GG,338.11" == transactionslines(0))
   }
+
+  test("Can read transactions") {
+    val result = RepoTransaction.findAll("/transactions.txt").unsafeRunSync()
+
+    assert(result.isRight)
+    assert(991 == result.right.get.length)
+  }
+
+  test("Cannot read transactions") {
+    val result = RepoTransaction.findAll("/unknownfile.txt").unsafeRunSync()
+
+    assert(result.isLeft)
+  }
 }

@@ -1,16 +1,29 @@
 package quant
 
+import cats.effect.IO
+
 import scala.io.Source
+import cats.data._
+import cats.effect._
+import cats.implicits._
 
-class RepoTransaction {
-  def findAll() = {
-    val fileName = "C:/Users/User1/Desktop/transactions.txt"
+import scala.util.{Success, Try}
 
-    val transactionslines = Source.fromFile(fileName).getLines().drop(1)
+object RepoTransaction {
+  def findAll(resourceFilename: String): IO[Either[ErrorRead, List[Transaction]]] = IO {
+    val file = getClass.getResource(resourceFilename)
 
-    val transactions: List[Transaction] = transactionslines.map { line =>
-      val split = line.split(',')
-      Transaction(split(0), split(1), split(2).toInt, split(3), split(4).toDouble)
-    }.toList
+    val transactions: Try[List[Transaction]] = Try{
+      for {
+        line <-  Source.fromFile(file.getPath).getLines().drop(1).toList
+        fields = line.split(',')
+        if fields.length == 5
+      } yield Transaction(fields(0), fields(1), fields(2).toInt, fields(3), fields(4).toDouble)
+    }
+
+    transactions match {
+      case Success(transactions) => transactions.asRight[ErrorRead]
+      case _ => FileDontExist.asLeft[List[Transaction]]
+    }
   }
 }
