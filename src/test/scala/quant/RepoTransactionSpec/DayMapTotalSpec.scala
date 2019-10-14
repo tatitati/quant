@@ -7,16 +7,16 @@ import quant.{ErrorRead, FileDontExist, RepoTransaction, Transaction}
 
 class DayMapTotalSpec extends FunSuite {
 
-  test("can group by date") {
-    val transactions = List(
-      Transaction("T000621","A36",20,"BB",161.01),
-      Transaction("T000622","A45",5,"CC",62.03),
-      Transaction("T000623","A22",20,"CC",987.04),
-      Transaction("T000624","A23",8,"CC",909.93),
-      Transaction("T000625","A26",5,"DD",114.63)
-    )
+  val givenListTransaction = List(
+    Transaction("T000621","A36",20,"BB",161.01),
+    Transaction("T000622","A45",5,"CC",62.03),
+    Transaction("T000623","A22",20,"CC",987.04),
+    Transaction("T000624","A23",8,"CC",909.93),
+    Transaction("T000625","A26",5,"DD",114.63)
+  )
 
-    val grouped = transactions.groupBy(_.transactionDay)
+  test("can group by date") {
+    val grouped = givenListTransaction.groupBy(_.transactionDay)
 
     assert(
       Map(
@@ -28,20 +28,8 @@ class DayMapTotalSpec extends FunSuite {
   }
 
   test("can group read transactions") {
-    import cats.syntax.either._
+    val result = RepoTransaction.findTotalByDay("/transactions.txt")
 
-    type dayMapTotal = Map[Int, Double]
-    val result: IO[Either[ErrorRead, listTransaction]] = RepoTransaction.findAll("/transactions.txt")
-
-    val mapped: IO[Either[ErrorRead, dayMapTotal]]  = result.map{
-      case Left(error) => Either.left(error)
-      case Right(listTransaction) => Either.right(
-        listTransaction
-          .groupBy(_.transactionDay)
-          .mapValues(_.map(_.transactionAmount).sum)
-      )
-    }
-
-    println(mapped.unsafeRunSync())
+    println(result.unsafeRunSync())
   }
 }

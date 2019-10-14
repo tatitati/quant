@@ -6,7 +6,6 @@ import cats.data._
 import cats.effect._
 import cats.implicits._
 import scala.util.{Success, Try}
-import cats.syntax.either._
 
 object RepoTransaction {
 
@@ -30,7 +29,7 @@ object RepoTransaction {
   }
 
   def findTotalByDay(resourceFilename: String): IO[Either[ErrorRead, dayMapTotal]] = {
-    val result: IO[Either[ErrorRead, listTransaction]] = RepoTransaction.findAll("/transactions.txt")
+    val result: IO[Either[ErrorRead, listTransaction]] = RepoTransaction.findAll(resourceFilename)
 
     result.map{
       case Left(error) => Either.left(error)
