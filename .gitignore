@@ -1,0 +1,8 @@
+
+target
+metastore*
+project/*
+.idea
+!project/Dependencies.scala
+!project/build.properties
+
