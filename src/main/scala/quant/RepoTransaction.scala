@@ -17,7 +17,6 @@ object RepoTransaction {
       for {
         line <-  Source.fromFile(file.getPath).getLines().drop(1).toList
         fields = line.split(',')
-        if fields.length == 5
       } yield Transaction(fields(0), fields(1), fields(2).toInt, fields(3), fields(4).toDouble)
     }
 
