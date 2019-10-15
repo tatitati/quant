@@ -30,19 +30,23 @@ object RepoTransaction {
     }
   }
 
+  def sumTransactions(transactions: List[Transaction]): Double = {
+    transactions.foldLeft(0.0)(_ + _.transactionAmount)
+  }
+
+  def groupTransactionsByDay(transactions: List[Transaction]): Map[Int, ListTransaction] = {
+    transactions.groupBy(_.transactionDay)
+  }
+
   def findTotalByDay(listTransaction: ListTransaction): DaysMapTotals = {
-      listTransaction
-        .groupBy(_.transactionDay)
-        .mapValues(_.map(_.transactionAmount).sum)
+      groupTransactionsByDay(listTransaction)
+        .mapValues(sumTransactions(_))
   }
 
   def accountMapAvg(listTransaction: ListTransaction): Map[AccountId, CategoriesMapAvgs] = {
-    listTransaction.groupBy(_.accountId)
-      .mapValues { (transactionsInAccount: ListTransaction) => transactionsInAccount.groupBy(_.category)
-          .mapValues { (transactionsInCategory: ListTransaction) =>
-            transactionsInCategory.map{ (transaction: Transaction) =>
-              transaction.transactionAmount
-            }.sum / transactionsInCategory.length
+    listTransaction.groupBy(_.accountId).mapValues { (transactionsInAccount: ListTransaction) =>
+        transactionsInAccount.groupBy(_.category).mapValues { (transactionsInCategory: ListTransaction) =>
+            sumTransactions(transactionsInCategory) / transactionsInCategory.length
           }
       }
   }

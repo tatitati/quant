@@ -6,6 +6,34 @@ import quant.RepoTransaction.ListTransaction
 import quant.{ErrorRead, FileDontExist, RepoTransaction, Transaction}
 
 class QuestionsSpec extends FunSuite {
+  test("I can sum up any group of transactions") {
+    val givenListTransaction = List(
+      Transaction("any","any",44,"any",20),
+      Transaction("any","any",55,"any",5),
+      Transaction("any","any",33,"any",100)
+    )
+
+    val total = RepoTransaction.sumTransactions(givenListTransaction)
+
+    assert(125.0 == total)
+  }
+
+  test("I can group by day any group of transactions") {
+    val givenListTransaction = List(
+      Transaction("any","any",44,"any",20),
+      Transaction("any","any",55,"any",5),
+      Transaction("any","any",44,"any",100)
+    )
+
+    val total = RepoTransaction.groupTransactionsByDay(givenListTransaction)
+
+    assert(Map(
+      44 -> List(Transaction("any","any",44,"any",20.0), Transaction("any","any",44,"any",100.0)),
+      55 -> List(Transaction("any","any",55,"any",5.0)))
+      == total)
+  }
+
+
   test("Question1: can calculate total transactions value per day") {
     val givenListTransaction = List(
       Transaction("any","any",20,"any",161.01),
