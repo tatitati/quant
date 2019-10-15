@@ -13,6 +13,7 @@ object RepoTransaction {
   type DaysMapTotals = Map[Int, Double]
   type CategoriesMapAvgs = Map[String, Double]
   type AccountId =  String
+  type Day =  Int
 
   def findAll(resourceFilename: String): IO[Either[ErrorRead, ListTransaction]] = IO {
     val file = getClass.getResource(resourceFilename)
@@ -30,16 +31,22 @@ object RepoTransaction {
     }
   }
 
-  def sumTransactions(transactions: List[Transaction]): Double = {
+  def sumTransactions(transactions: ListTransaction): Double = {
     transactions.foldLeft(0.0)(_ + _.transactionAmount)
   }
 
-  def groupTransactionsByDay(transactions: List[Transaction]): Map[Int, ListTransaction] = {
+  def groupTransactionsByDay(transactions: ListTransaction): Map[Day, ListTransaction] = {
     transactions.groupBy(_.transactionDay)
   }
 
-  def groupTransactionsByAccount(transactions: List[Transaction]): Map[String, ListTransaction] = {
+  def groupTransactionsByAccount(transactions: ListTransaction): Map[AccountId, ListTransaction] = {
     transactions.groupBy(_.accountId)
+  }
+
+  def selectTransactionsInWindow(transactions: ListTransaction, day: Day): ListTransaction = {
+    transactions.filter{ tr =>
+      tr.transactionDay < day && tr.transactionDay >= day-5
+    }
   }
 
   def findTotalByDay(listTransaction: ListTransaction): DaysMapTotals = {
