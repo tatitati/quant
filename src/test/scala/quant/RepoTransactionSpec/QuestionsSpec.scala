@@ -8,12 +8,11 @@ import quant.{ErrorRead, FileDontExist, RepoTransaction, Transaction}
 class QuestionsSpec extends FunSuite {
   test("Question1: can calculate total transactions value per day") {
     val givenListTransaction = List(
-      // transactionId, accountId, transactionDay, category, transactionAmount
-      Transaction("T000621","A36",20,"BB",161.01),
-      Transaction("T000622","A22",5,"CC",62.03),
-      Transaction("T000623","A22",20,"AA",987.04),
-      Transaction("T000624","A36",8,"CC",909.93),
-      Transaction("T000625","A21",5,"DD",114.63)
+      Transaction("any","any",20,"any",161.01),
+      Transaction("any","any",5,"any",62.03),
+      Transaction("any","any",20,"any",987.04),
+      Transaction("any","any",8,"any",909.93),
+      Transaction("any","any",5,"any",114.63)
     )
 
     val dayMapTotalvalue = RepoTransaction.findTotalByDay(givenListTransaction)
@@ -26,6 +25,26 @@ class QuestionsSpec extends FunSuite {
   }
 
   test("Question2: can calculate the average value of transactions per account for each type of transaction") {
+    val givenListTransaction = List(
+      Transaction("any","accountA",20,"catA1",10),
+      Transaction("any","accountA",5,"catA1",70),
+      Transaction("any","accountA",20,"catA1",20),
+      Transaction("any","accountA",20,"catA2",30),
+      Transaction("any","accountA",20,"catA2",100),
+      Transaction("any","accountB",8,"catB1",500),
+      Transaction("any","accountB",5,"catB1",100),
+      Transaction("any","accountB",5,"catB2",80)
+    )
+
+    val resume = RepoTransaction.accountMapAvg(givenListTransaction)
+
+    assert(Map(
+        "accountA" -> Map("catA2" -> 65.0, "catA1" -> 33.333333333333336),
+        "accountB" -> Map("catB2" -> 80.0, "catB1" -> 300.0))
+      == resume)
+  }
+
+  test("Question3: Calculate stats") {
     val givenListTransaction = List(
       Transaction("T000621","accountA",20,"catA1",10),
       Transaction("T000622","accountA",5,"catA1",70),
@@ -40,8 +59,8 @@ class QuestionsSpec extends FunSuite {
     val resume = RepoTransaction.accountMapAvg(givenListTransaction)
 
     assert(Map(
-        "accountA" -> Map("catA2" -> 65.0, "catA1" -> 33.333333333333336),
-        "accountB" -> Map("catB2" -> 80.0, "catB1" -> 300.0))
+      "accountA" -> Map("catA2" -> 65.0, "catA1" -> 33.333333333333336),
+      "accountB" -> Map("catB2" -> 80.0, "catB1" -> 300.0))
       == resume)
   }
 }

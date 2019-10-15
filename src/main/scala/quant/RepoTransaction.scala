@@ -10,7 +10,7 @@ import scala.util.{Success, Try}
 object RepoTransaction {
 
   type ListTransaction = List[Transaction]
-  type daysMapTotals = Map[Int, Double]
+  type DaysMapTotals = Map[Int, Double]
   type CategoriesMapAvgs = Map[String, Double]
   type AccountId =  String
 
@@ -30,7 +30,7 @@ object RepoTransaction {
     }
   }
 
-  def findTotalByDay(listTransaction: ListTransaction): daysMapTotals = {
+  def findTotalByDay(listTransaction: ListTransaction): DaysMapTotals = {
       listTransaction
         .groupBy(_.transactionDay)
         .mapValues(_.map(_.transactionAmount).sum)
