@@ -50,8 +50,13 @@ object RepoTransaction {
   }
 
   def findTotalByDay(listTransaction: ListTransaction): DaysMapTotals = {
-      groupTransactionsByDay(listTransaction)
-        .mapValues(sumTransactions(_))
+    //      groupTransactionsByDay(listTransaction)
+    //        .mapValues(sumTransactions(_))
+
+    for{
+      (dayNumber, dayTransactions) <- groupTransactionsByDay(listTransaction)
+      dayTotal <- List(sumTransactions(dayTransactions))
+    } yield (dayNumber, dayTotal)
   }
 
   def accountMapAvg(listTransaction: ListTransaction): Map[AccountId, CategoriesMapAvgs] = {

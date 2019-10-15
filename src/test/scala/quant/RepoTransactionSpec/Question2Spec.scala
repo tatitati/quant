@@ -2,7 +2,7 @@ package quant.RepoTransactionSpec
 
 import cats.effect.IO
 import org.scalatest.FunSuite
-import quant.RepoTransaction.ListTransaction
+import quant.RepoTransaction.{ListTransaction, groupTransactionsByAccount, sumTransactions}
 import quant.{ErrorRead, FileDontExist, RepoTransaction, Transaction}
 
 class Question2Spec extends FunSuite {
