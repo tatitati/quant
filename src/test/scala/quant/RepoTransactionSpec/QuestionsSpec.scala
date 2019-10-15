@@ -84,11 +84,7 @@ class QuestionsSpec extends FunSuite {
       Transaction("T000625","accountB",5,"catB2",80)
     )
 
-    val resume = RepoTransaction.accountMapAvg(givenListTransaction)
+   // todo
 
-    assert(Map(
-      "accountA" -> Map("catA2" -> 65.0, "catA1" -> 33.333333333333336),
-      "accountB" -> Map("catB2" -> 80.0, "catB1" -> 300.0))
-      == resume)
   }
 }
