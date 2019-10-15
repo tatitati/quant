@@ -9,11 +9,12 @@ import scala.util.{Success, Try}
 
 object RepoTransaction {
 
-  type listTransaction = List[Transaction]
-  type dayMapTotal = Map[Int, Double]
-  type accountMapAvg = Map[String, Double]
+  type ListTransaction = List[Transaction]
+  type daysMapTotals = Map[Int, Double]
+  type CategoriesMapAvgs = Map[String, Double]
+  type AccountId =  String
 
-  def findAll(resourceFilename: String): IO[Either[ErrorRead, listTransaction]] = IO {
+  def findAll(resourceFilename: String): IO[Either[ErrorRead, ListTransaction]] = IO {
     val file = getClass.getResource(resourceFilename)
 
     val transactions: Try[List[Transaction]] = Try {
@@ -25,42 +26,24 @@ object RepoTransaction {
 
     transactions match {
       case Success(transactions) => transactions.asRight[ErrorRead]
-      case _ => FileDontExist.asLeft[listTransaction]
+      case _ => FileDontExist.asLeft[ListTransaction]
     }
   }
 
-  def findTotalByDay(resourceFilename: String): IO[Either[ErrorRead, dayMapTotal]] = {
-    val result: IO[Either[ErrorRead, listTransaction]] = RepoTransaction.findAll(resourceFilename)
-
-    result.map{
-      case Left(error) => Either.left(error)
-      case Right(listTransaction) => Either.right(
-        listTransaction
-          .groupBy(_.transactionDay)
-          .mapValues(_.map(_.transactionAmount).sum)
-      )
-    }
+  def findTotalByDay(listTransaction: ListTransaction): daysMapTotals = {
+      listTransaction
+        .groupBy(_.transactionDay)
+        .mapValues(_.map(_.transactionAmount).sum)
   }
 
-  def accountMapAvg(resourceFilename: String): IO[Either[ErrorRead, accountMapAvg]] = {
-    val result: IO[Either[ErrorRead, listTransaction]] = RepoTransaction.findAll(resourceFilename)
-
-    result.map{
-      case Left(error) => Either.left(error)
-      case Right(listTransaction) => Either.right {
-        val result1 = listTransaction
-          .groupBy(_.accountId)
-          .mapValues{
-            _.groupBy(_.category)
-              .mapValues(_.size)
+  def accountMapAvg(listTransaction: ListTransaction): Map[AccountId, CategoriesMapAvgs] = {
+    listTransaction.groupBy(_.accountId)
+      .mapValues { (transactionsInAccount: ListTransaction) => transactionsInAccount.groupBy(_.category)
+          .mapValues { (transactionsInCategory: ListTransaction) =>
+            transactionsInCategory.map{ (transaction: Transaction) =>
+              transaction.transactionAmount
+            }.sum / transactionsInCategory.length
           }
-
-         val result2 = for{
-          (key, submap) <- result1
-        } yield (key, submap.map(_._2).sum.toDouble)
-
-        result2
       }
-    }
   }
 }
