@@ -47,13 +47,20 @@ object RepoTransaction {
 
     result.map{
       case Left(error) => Either.left(error)
-      case Right(listTransaction) => Either.right(
-        listTransaction
+      case Right(listTransaction) => Either.right {
+        val result1 = listTransaction
           .groupBy(_.accountId)
           .mapValues{
-            _.map(_.transactionAmount).sum
+            _.groupBy(_.category)
+              .mapValues(_.size)
           }
-      )
+
+         val result2 = for{
+          (key, submap) <- result1
+        } yield (key, submap.map(_._2).sum.toDouble)
+
+        result2
+      }
     }
   }
 }

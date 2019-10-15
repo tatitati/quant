@@ -29,8 +29,6 @@ class AccountMapAvgSpec extends FunSuite {
         )
     }
 
-
-
     println(mapped.unsafeRunSync)
   }
 
