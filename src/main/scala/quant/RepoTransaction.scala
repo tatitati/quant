@@ -38,13 +38,17 @@ object RepoTransaction {
     transactions.groupBy(_.transactionDay)
   }
 
+  def groupTransactionsByAccount(transactions: List[Transaction]): Map[String, ListTransaction] = {
+    transactions.groupBy(_.accountId)
+  }
+
   def findTotalByDay(listTransaction: ListTransaction): DaysMapTotals = {
       groupTransactionsByDay(listTransaction)
         .mapValues(sumTransactions(_))
   }
 
   def accountMapAvg(listTransaction: ListTransaction): Map[AccountId, CategoriesMapAvgs] = {
-    listTransaction.groupBy(_.accountId).mapValues { (transactionsInAccount: ListTransaction) =>
+    groupTransactionsByAccount(listTransaction).mapValues { (transactionsInAccount: ListTransaction) =>
         transactionsInAccount.groupBy(_.category).mapValues { (transactionsInCategory: ListTransaction) =>
             sumTransactions(transactionsInCategory) / transactionsInCategory.length
           }
