@@ -37,7 +37,10 @@ class FindAllSpec extends FunSuite {
   }
 
   test("Cannot read transactions") {
-    val result = RepoTransaction.findAll("/unknownfile.txt").unsafeRunSync()
+    val result: Either[ErrorRead, listTransaction] = RepoTransaction
+      .findAll("/unknownfile.txt")
+      .unsafeRunSync()
+
     assert(result.isLeft)
   }
 }

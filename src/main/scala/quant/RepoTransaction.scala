@@ -50,7 +50,9 @@ object RepoTransaction {
       case Right(listTransaction) => Either.right(
         listTransaction
           .groupBy(_.accountId)
-          .mapValues(_.map(_.transactionAmount).sum)
+          .mapValues{
+            _.map(_.transactionAmount).sum
+          }
       )
     }
   }
