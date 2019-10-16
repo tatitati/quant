@@ -9,8 +9,11 @@ val thirdDependencies = Seq(
   "org.scalatest" %% "scalatest" % "3.0.5"
 )
 
+
+
 lazy val root = (project in file("."))
   .settings(
+    sbtPlugin := true,
     name := "quant",
     libraryDependencies ++= thirdDependencies
   )

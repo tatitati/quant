@@ -1,9 +1,6 @@
-package quant.RepoTransactionSpec
+package quant
 
-import cats.effect.IO
 import org.scalatest.FunSuite
-import quant.RepoTransaction.ListTransaction
-import quant.{ErrorRead, FileDontExist, RepoTransaction, Transaction}
 
 class Question3Spec extends FunSuite {
   test("Can select proper window of transactions") {
@@ -30,19 +27,29 @@ class Question3Spec extends FunSuite {
     )
   }
 
-  test("Question3: Calculate stats") {
+  test("Can find maximum value of transaction from a bunch of transactions") {
     val givenListTransaction = List(
-      Transaction("T000621","accountA",20,"catA1",10),
-      Transaction("T000622","accountA",5,"catA1",70),
-      Transaction("T000623","accountA",20,"catA1",20),
-      Transaction("T000623","accountA",20,"catA2",30),
-      Transaction("T000623","accountA",20,"catA2",100),
-      Transaction("T000624","accountB",8,"catB1",500),
-      Transaction("T000625","accountB",5,"catB1",100),
-      Transaction("T000625","accountB",5,"catB2",80)
+      Transaction("any","any",1,"any",20),
+      Transaction("any","any",2,"any",5),
+      Transaction("any","any",3,"any",600),
+      Transaction("any","any",4,"any",300)
     )
 
-   // todo
+    val maxValue = RepoTransaction.findTransactionWithMaxValue(givenListTransaction)
 
+    assert(600 == maxValue)
+  }
+
+  test("Can calculate average value of a bunch of transactions") {
+    val givenListTransaction = List(
+      Transaction("any","any",1,"any",20),
+      Transaction("any","any",2,"any",5),
+      Transaction("any","any",3,"any",60),
+      Transaction("any","any",4,"any",100)
+    )
+
+    val maxValue = RepoTransaction.averageValue(givenListTransaction)
+
+    assert(46.25 == maxValue)
   }
 }

@@ -43,6 +43,10 @@ object RepoTransaction {
     transactions.groupBy(_.accountId)
   }
 
+  def groupTransactionsByCategory(transactions: ListTransaction): Map[String, ListTransaction] = {
+    transactions.groupBy(_.category)
+  }
+
   def selectTransactionsInWindow(transactions: ListTransaction, day: Day): ListTransaction = {
     transactions.filter{ tr =>
       tr.transactionDay < day && tr.transactionDay >= day-5
@@ -50,20 +54,27 @@ object RepoTransaction {
   }
 
   def findTotalByDay(listTransaction: ListTransaction): DaysMapTotals = {
-    //      groupTransactionsByDay(listTransaction)
-    //        .mapValues(sumTransactions(_))
-
-    for{
-      (dayNumber, dayTransactions) <- groupTransactionsByDay(listTransaction)
-      dayTotal <- List(sumTransactions(dayTransactions))
-    } yield (dayNumber, dayTotal)
+    groupTransactionsByDay(listTransaction)
+      .mapValues(sumTransactions(_))
   }
 
   def accountMapAvg(listTransaction: ListTransaction): Map[AccountId, CategoriesMapAvgs] = {
     groupTransactionsByAccount(listTransaction).mapValues { (transactionsInAccount: ListTransaction) =>
-        transactionsInAccount.groupBy(_.category).mapValues { (transactionsInCategory: ListTransaction) =>
+        groupTransactionsByCategory(transactionsInAccount).mapValues { (transactionsInCategory: ListTransaction) =>
             sumTransactions(transactionsInCategory) / transactionsInCategory.length
           }
       }
+  }
+
+  def findTransactionWithMaxValue(listTransaction: List[Transaction]): Double = {
+    listTransaction
+      .map(_.transactionAmount)
+      .reduceLeft(_ max _)
+  }
+
+  def averageValue(listTransaction: List[Transaction]): Double = {
+    listTransaction
+      .map(_.transactionAmount)
+      .foldLeft(0.0)(_ + _) / listTransaction.length
   }
 }
