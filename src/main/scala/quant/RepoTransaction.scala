@@ -58,6 +58,11 @@ object RepoTransaction {
       .mapValues(sumTransactions(_))
   }
 
+  def findTotalByType(listTransaction: List[Transaction]) = {
+    groupTransactionsByCategory(listTransaction)
+      .mapValues(sumTransactions(_))
+  }
+
   def accountMapAvg(listTransaction: ListTransaction): Map[AccountId, CategoriesMapAvgs] = {
     groupTransactionsByAccount(listTransaction).mapValues { (transactionsInAccount: ListTransaction) =>
         groupTransactionsByCategory(transactionsInAccount).mapValues { (transactionsInCategory: ListTransaction) =>
