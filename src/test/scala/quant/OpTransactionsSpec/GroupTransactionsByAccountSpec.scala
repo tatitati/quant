@@ -1,7 +1,7 @@
-package quant.RepoTransactionSpec
+package quant.OpTransactionsSpec
 
 import org.scalatest.FunSuite
-import quant.{RepoTransaction, Transaction}
+import quant.{OpTransactions, Transaction}
 
 class GroupTransactionsByAccountSpec extends FunSuite {
 
@@ -14,7 +14,7 @@ class GroupTransactionsByAccountSpec extends FunSuite {
       Transaction("any","accountB",5,"any",80)
     )
 
-    val groups = RepoTransaction.groupTransactionsByAccount(givenListTransaction)
+    val groups = OpTransactions.groupTransactionsByAccount(givenListTransaction)
 
     assert(Map(
       "accountB" -> List(

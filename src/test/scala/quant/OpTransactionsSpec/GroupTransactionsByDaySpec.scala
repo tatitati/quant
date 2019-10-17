@@ -1,7 +1,7 @@
-package quant.RepoTransactionSpec
+package quant.OpTransactionsSpec
 
 import org.scalatest.FunSuite
-import quant.{RepoTransaction, Transaction}
+import quant.{OpTransactions, Transaction}
 
 class GroupTransactionsByDaySpec extends FunSuite {
 
@@ -12,7 +12,7 @@ class GroupTransactionsByDaySpec extends FunSuite {
       Transaction("any","any",44,"any",100)
     )
 
-    val dayMapTransactions = RepoTransaction.groupTransactionsByDay(givenListTransaction)
+    val dayMapTransactions = OpTransactions.groupTransactionsByDay(givenListTransaction)
 
     assert(Map(
       44 -> List(Transaction("any","any",44,"any",20.0), Transaction("any","any",44,"any",100.0)),

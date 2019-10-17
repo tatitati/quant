@@ -7,7 +7,7 @@ import cats.effect._
 import cats.implicits._
 import scala.util.{Success, Try}
 
-object RepoTransaction {
+object OpTransactions {
 
   type ListTransaction = List[Transaction]
   type DaysMapTotals = Map[Int, Double]
@@ -51,6 +51,10 @@ object RepoTransaction {
     transactions.filter{ tr =>
       tr.transactionDay < day && tr.transactionDay >= day-5
     }
+  }
+
+  def orderByDayTransactions(transactions: ListTransaction): ListTransaction = {
+    transactions.sortWith(_.transactionDay < _.transactionDay)
   }
 
   def findTotalByDay(listTransaction: ListTransaction): DaysMapTotals = {

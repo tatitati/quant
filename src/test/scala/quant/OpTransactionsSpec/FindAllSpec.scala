@@ -1,8 +1,8 @@
-package quant.RepoTransactionSpec
+package quant.OpTransactionsSpec
 
 import org.scalatest.FunSuite
-import quant.RepoTransaction.ListTransaction
-import quant.{ErrorRead, RepoTransaction}
+import quant.OpTransactions.ListTransaction
+import quant.{ErrorRead, OpTransactions}
 import cats.effect.IO
 import scala.io.Source
 
@@ -25,7 +25,7 @@ class FindAllSpec extends FunSuite {
   }
 
   test("Can read transactions") {
-    val result: Either[ErrorRead, ListTransaction] = RepoTransaction
+    val result: Either[ErrorRead, ListTransaction] = OpTransactions
       .findAll("/transactions.txt")
       .unsafeRunSync()
 
@@ -37,7 +37,7 @@ class FindAllSpec extends FunSuite {
   }
 
   test("Cannot read transactions") {
-    val result: Either[ErrorRead, ListTransaction] = RepoTransaction
+    val result: Either[ErrorRead, ListTransaction] = OpTransactions
       .findAll("/unknownfile.txt")
       .unsafeRunSync()
 

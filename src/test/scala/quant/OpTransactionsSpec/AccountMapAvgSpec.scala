@@ -1,7 +1,7 @@
-package quant.RepoTransactionSpec
+package quant.OpTransactionsSpec
 
 import org.scalatest.FunSuite
-import quant.{RepoTransaction, Transaction}
+import quant.{OpTransactions, Transaction}
 
 class AccountMapAvgSpec extends FunSuite {
 
@@ -17,7 +17,7 @@ class AccountMapAvgSpec extends FunSuite {
       Transaction("any","accountB",5,"catB2",80)
     )
 
-    val resume = RepoTransaction.accountMapAvg(givenListTransaction)
+    val resume = OpTransactions.accountMapAvg(givenListTransaction)
 
     assert(Map(
       "accountA" -> Map("catA2" -> 65.0, "catA1" -> 33.333333333333336),

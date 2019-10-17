@@ -1,7 +1,7 @@
-package quant.RepoTransactionSpec
+package quant.OpTransactionsSpec
 
 import org.scalatest.FunSuite
-import quant.{RepoTransaction, Transaction}
+import quant.{OpTransactions, Transaction}
 
 class SumTransactionsSpec extends FunSuite {
 
@@ -12,7 +12,7 @@ class SumTransactionsSpec extends FunSuite {
       Transaction("any","any",33,"any",100)
     )
 
-    val total = RepoTransaction.sumTransactions(givenListTransaction)
+    val total = OpTransactions.sumTransactions(givenListTransaction)
 
     assert(125.0 == total)
   }

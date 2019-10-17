@@ -1,7 +1,7 @@
-package quant.RepoTransactionSpec
+package quant.OpTransactionsSpec
 
 import org.scalatest.FunSuite
-import quant.{RepoTransaction, Transaction}
+import quant.{OpTransactions, Transaction}
 
 class FindTotalByDaySpec extends FunSuite {
 
@@ -14,7 +14,7 @@ class FindTotalByDaySpec extends FunSuite {
       Transaction("any","any",5,"any",114.63)
     )
 
-    val dayMapTotalvalue = RepoTransaction.findTotalByDay(givenListTransaction)
+    val dayMapTotalvalue = OpTransactions.findTotalByDay(givenListTransaction)
 
     assert(Map(
       8 -> 909.93,
