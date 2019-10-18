@@ -7,15 +7,26 @@ import quant.OpTransactions.ListTransaction
 
 object Question1 extends IOApp {
   override def run(args: List[String]): IO[ExitCode] = {
-    val transactions: IO[Either[ErrorRead, ListTransaction]] = OpTransactions.findAll("/transactions.txt")
+    val transactions: IO[Either[ErrorRead, ListTransaction]] = RepositoryTransactions.findAll("/transactions.txt")
 
     val result = EitherT(transactions).map { listTransactions: ListTransaction =>
-      OpTransactions.findTotalByDay(listTransactions)
+      for{
+        transaction <- listTransactions
+        stat <- OpTransactions.sumByDay(transaction)
+      } yield stat
     }.value
 
     val all = result.unsafeRunSync()
 
-    IO(println(all)).as(ExitCode.Success)
+    all match {
+      case Right(stats) => IO{
+        println("Day|Total")
+        stats.foreach{x => println(x.toTable)}
+      }.as(ExitCode.Success)
+      case _ => IO{
+        println("Error")
+      }.as(ExitCode.Error)
+    }
   }
 }
 

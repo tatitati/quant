@@ -1,21 +1,11 @@
-package quant.OpTransactionsSpec
+package quant
 
 import org.scalatest.FunSuite
 import quant.OpTransactions.ListTransaction
-import quant.{ErrorRead, OpTransactions}
-import cats.effect.IO
+
 import scala.io.Source
 
-class FindAllSpec extends FunSuite {
-
-  test("can get URL of real file") {
-    val file = getClass.getResource("/transactions.txt")
-
-    // this test will fail in any other environment as is not environment agnostic.
-    // A classic solution to this issue is creating a defined environment using docker, virtualbox, etc.
-    assert("/Users/tati/Desktop/scala_lab/quant/target/scala-2.12/classes/transactions.txt" == file.getPath)
-  }
-
+class RepositoryTransactionsSpec extends FunSuite {
   test("Can really read a file using the provided code") {
     val file = getClass.getResource("/transactions.txt")
     val transactionslines = Source.fromFile(file.getPath).getLines().drop(1).toList
@@ -25,7 +15,7 @@ class FindAllSpec extends FunSuite {
   }
 
   test("Can read transactions") {
-    val result: Either[ErrorRead, ListTransaction] = OpTransactions
+    val result: Either[ErrorRead, ListTransaction] = RepositoryTransactions
       .findAll("/transactions.txt")
       .unsafeRunSync()
 
@@ -37,7 +27,7 @@ class FindAllSpec extends FunSuite {
   }
 
   test("Cannot read transactions") {
-    val result: Either[ErrorRead, ListTransaction] = OpTransactions
+    val result: Either[ErrorRead, ListTransaction] = RepositoryTransactions
       .findAll("/unknownfile.txt")
       .unsafeRunSync()
 
