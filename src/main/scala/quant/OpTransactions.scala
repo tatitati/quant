@@ -2,35 +2,50 @@ package quant
 
 import cats.implicits._
 
+import scala.annotation.tailrec
+
 object OpTransactions {
   type ListTransaction = List[Transaction]
 
-  def selectTransactionsInWindow(transactions: ListTransaction, day: Int): ListTransaction = {
-    transactions.filter{ tr =>
-      tr.transactionDay < day && tr.transactionDay >= day-5
+  @tailrec
+  def processAllByDay(transactions: List[Transaction], statsAcumulator: List[Stat1]): List[Stat1] = {
+    transactions match {
+      case Nil => statsAcumulator
+      case transactions =>
+        processAllByDay(
+          transactions.tail,
+          OpTransactions.mergeTransactionByDay(transactions.head, statsAcumulator)
+        )
+
     }
   }
 
-  def sumByDay(transaction: Transaction, statsAcumulator: List[Stat1] = List()): List[Stat1] = {
-    val statMatchedIdx: List[Int] = statsAcumulator.zipWithIndex.filter(_._1.day == transaction.transactionDay).map(_._2)
+  def mergeTransactionByDay(transaction: Transaction, statsAcumulator: List[Stat1] = List()): List[Stat1] = {
+    val foundStatForDay: List[Int] = statsAcumulator.zipWithIndex.filter(_._1.day == transaction.transactionDay).map(_._2)
 
-    val result = statMatchedIdx match {
+    foundStatForDay match {
       case Nil => statsAcumulator :+ Stat1(transaction.transactionDay, transaction.transactionAmount)
-      case List(idx) => {
-        statsAcumulator.updated(
-          idx,
+      case List(idx) => statsAcumulator.updated(idx,
           Stat1(
             statsAcumulator(idx).day,
             statsAcumulator(idx).total + transaction.transactionAmount
           )
         )
-      }
     }
-
-    result.sortBy(_.day)
   }
 
-  def sumByAccountAndCategory(transaction: Transaction, statsAcumulator: List[Stat2] = List()): List[Stat2] = {
+  @tailrec
+  def processAllByAccAndCategory(transactions: List[Transaction], statsAcumulator: List[Stat2] = List()): List[Stat2] = {
+    transactions match {
+      case Nil => statsAcumulator
+      case values => processAllByAccAndCategory(
+        values.tail,
+        OpTransactions.mergeTransactionByAccountAndCategory(values.head, statsAcumulator)
+      )
+    }
+  }
+
+  def mergeTransactionByAccountAndCategory(transaction: Transaction, statsAcumulator: List[Stat2] = List()): List[Stat2] = {
     val statMatchedIdx: List[Int] = statsAcumulator
       .zipWithIndex
       .filter(stat =>
@@ -55,51 +70,48 @@ object OpTransactions {
     }
   }
 
-  def getFullStat(transaction: Transaction, statsAcumulator: List[Stat3] = List()): List[Stat3] = {
-    val statMatchedIdx: List[Int] = statsAcumulator
-      .zipWithIndex
-      .filter(stat =>
-        stat._1.day == transaction.transactionDay
-          && stat._1.account == transaction.accountId
-      )
-      .map(_._2)
+  def getWindow(transaction: Transaction, accStats: List[Stat3]): List[Stat3] = {
+    accStats.filter { stat =>
+      stat.day > transaction.transactionDay - 6 &&
+      stat.day < transaction.transactionDay &&
+      stat.account == transaction.accountId
+    }
+  }
 
-    statMatchedIdx match {
-      case Nil =>
-        val defaultMap = Map("AA" -> 0.0, "BB" -> 0.0, "CC" -> 0.0, "DD" -> 0.0, "EE" -> 0.0, "FF" -> 0.0, "GG" -> 0.0)
-        statsAcumulator :+ Stat3(
+  def combineWindow(transaction: Transaction, listOfStats: List[Stat3]): Stat3 = {
+    listOfStats match {
+      case Nil => Stat3(transaction.transactionDay, transaction.accountId, 0, 0, 0)
+      case _ => Stat3(
+        transaction.transactionDay,
+        transaction.accountId,
+        listOfStats.maxBy(_.max).max,
+        listOfStats.foldLeft(0.0)(_ + _.total),
+        listOfStats.foldLeft(0)(_ + _.fromNItems),
+        Map(
+          "AA" -> listOfStats.foldLeft(0.0)(_ + _.categoryMapTotal("AA")),
+          "BB" -> 0,
+          "CC" -> listOfStats.foldLeft(0.0)(_ + _.categoryMapTotal("CC")),
+          "DD" -> 0,
+          "EE" -> 0,
+          "FF" -> listOfStats.foldLeft(0.0)(_ + _.categoryMapTotal("FF")),
+          "GG" -> 0
+        )
+      )
+    }
+  }
+
+  def getFullStat(transaction: Transaction, statsAcumulator: List[Stat3] = List()): List[Stat3] = {
+    val windowStats: List[Stat3] = getWindow(transaction, statsAcumulator)
+
+    windowStats match {
+      case Nil => statsAcumulator :+ Stat3(
           transaction.transactionDay,
           transaction.accountId,
-          transaction.transactionAmount,
-          transaction.transactionAmount,
-          1,
-          defaultMap + (transaction.category -> transaction.transactionAmount)
+          0,
+          0,
+          1
         )
-      case List(idx) => {
-        statsAcumulator.updated(
-          idx,
-          Stat3(
-            statsAcumulator(idx).day,
-            statsAcumulator(idx).account,
-            if(transaction.transactionAmount > statsAcumulator(idx).max) transaction.transactionAmount else statsAcumulator(idx).max,
-            statsAcumulator(idx).total + transaction.transactionAmount,
-            statsAcumulator(idx).fromNItems + 1,
-            {
-              val statsAcc = statsAcumulator(idx).categoryMapTotal
-
-              statsAcc.contains(transaction.category) match {
-                case true => {
-                  val originalvalue = statsAcc(transaction.category)
-                  val update1 = statsAcc - transaction.category
-                  update1 + (transaction.category -> (originalvalue + transaction.transactionAmount))
-                }
-                case false => statsAcc + (transaction.category -> transaction.transactionAmount)
-              }
-
-            }
-          )
-        )
-      }
+      case listOfStats => statsAcumulator :+ combineWindow(transaction, listOfStats)
     }
   }
 }
