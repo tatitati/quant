@@ -6,15 +6,15 @@ import quant.{OpTransactions, Stat1, Transaction}
 class SumByDaySpec extends FunSuite{
   test("OpTransactions.sumByDay() update stats on they are received")
   {
-    val statsA = OpTransactions.mergeTransactionByDay(
+    val statsA = OpTransactions.processByDayNewTrasaction(
       Transaction("EEE","any",3,"any",10000)
     )
 
-    val statsB = OpTransactions.mergeTransactionByDay(
+    val statsB = OpTransactions.processByDayNewTrasaction(
       Transaction("EEE","any",2,"any",10000), statsA
     )
 
-    val statsC = OpTransactions.mergeTransactionByDay(
+    val statsC = OpTransactions.processByDayNewTrasaction(
       Transaction("EEE","any",3,"any",50000), statsB
     )
 

@@ -5,19 +5,19 @@ import quant.{OpTransactions, Stat2, Transaction}
 
 class SumByAccountAndCategorySpec extends FunSuite{
   test("question2 concept") {
-    val statsA = OpTransactions.mergeTransactionByAccountAndCategory(
+    val statsA = OpTransactions.processByAccountAndCatNewTransaction(
       Transaction("any","accA",1,"cat1",20000)
     )
 
-    val statsB = OpTransactions.mergeTransactionByAccountAndCategory(
+    val statsB = OpTransactions.processByAccountAndCatNewTransaction(
       Transaction("any","accB",1,"cat1",10000), statsA
     )
 
-    val statsC = OpTransactions.mergeTransactionByAccountAndCategory(
+    val statsC = OpTransactions.processByAccountAndCatNewTransaction(
       Transaction("any","accA",1,"cat1",888), statsB
     )
 
-    val statsD = OpTransactions.mergeTransactionByAccountAndCategory(
+    val statsD = OpTransactions.processByAccountAndCatNewTransaction(
       Transaction("any","accA",1,"cat2",555), statsC
     )
 

@@ -2,50 +2,24 @@ package quant
 
 import cats.implicits._
 
-import scala.annotation.tailrec
-
 object OpTransactions {
   type ListTransaction = List[Transaction]
 
-  @tailrec
-  def processAllByDay(transactions: List[Transaction], statsAcumulator: List[Stat1]): List[Stat1] = {
-    transactions match {
-      case Nil => statsAcumulator
-      case transactions =>
-        processAllByDay(
-          transactions.tail,
-          OpTransactions.mergeTransactionByDay(transactions.head, statsAcumulator)
-        )
-
-    }
-  }
-
-  def mergeTransactionByDay(transaction: Transaction, statsAcumulator: List[Stat1] = List()): List[Stat1] = {
+  def processByDayNewTrasaction(transaction: Transaction, statsAcumulator: List[Stat1] = List()): List[Stat1] = {
     val foundStatForDay: List[Int] = statsAcumulator.zipWithIndex.filter(_._1.day == transaction.transactionDay).map(_._2)
 
     foundStatForDay match {
       case Nil => statsAcumulator :+ Stat1(transaction.transactionDay, transaction.transactionAmount)
       case List(idx) => statsAcumulator.updated(idx,
-          Stat1(
-            statsAcumulator(idx).day,
-            statsAcumulator(idx).total + transaction.transactionAmount
-          )
+        Stat1(
+          statsAcumulator(idx).day,
+          statsAcumulator(idx).total + transaction.transactionAmount
         )
-    }
-  }
-
-  @tailrec
-  def processAllByAccAndCategory(transactions: List[Transaction], statsAcumulator: List[Stat2] = List()): List[Stat2] = {
-    transactions match {
-      case Nil => statsAcumulator
-      case values => processAllByAccAndCategory(
-        values.tail,
-        OpTransactions.mergeTransactionByAccountAndCategory(values.head, statsAcumulator)
       )
     }
   }
 
-  def mergeTransactionByAccountAndCategory(transaction: Transaction, statsAcumulator: List[Stat2] = List()): List[Stat2] = {
+  def processByAccountAndCatNewTransaction(transaction: Transaction, statsAcumulator: List[Stat2] = List()): List[Stat2] = {
     val statMatchedIdx: List[Int] = statsAcumulator
       .zipWithIndex
       .filter(stat =>
@@ -56,8 +30,7 @@ object OpTransactions {
 
     statMatchedIdx match {
       case Nil => statsAcumulator :+ Stat2(transaction.accountId, transaction.category, transaction.transactionAmount, 1)
-      case List(idx) => {
-        statsAcumulator.updated(
+      case List(idx) => statsAcumulator.updated(
           idx,
           Stat2(
             statsAcumulator(idx).account,
@@ -66,7 +39,6 @@ object OpTransactions {
             statsAcumulator(idx).fromNItems + 1
           )
         )
-      }
     }
   }
 
@@ -77,6 +49,16 @@ object OpTransactions {
       stat.account == transaction.accountId
     }
   }
+
+
+
+
+
+
+
+
+
+
 
   def combineWindow(transaction: Transaction, listOfStats: List[Stat3]): Stat3 = {
     listOfStats match {
