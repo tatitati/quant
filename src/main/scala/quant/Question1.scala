@@ -7,11 +7,10 @@ import quant.OpTransactions.ListTransaction
 
 import scala.annotation.tailrec
 
-
 object Question1 extends IOApp {
 
   @tailrec
-  def processAllByDay(transactions: List[Transaction], statsAcumulator: List[Stat1]): List[Stat1] = {
+  def processAllByDay(transactions: List[Transaction], statsAcumulator: List[StatQ1]): List[StatQ1] = {
     transactions match {
       case Nil => statsAcumulator
       case transactions =>

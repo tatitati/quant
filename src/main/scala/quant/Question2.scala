@@ -9,7 +9,7 @@ import scala.annotation.tailrec
 object Question2 extends IOApp {
 
   @tailrec
-  def processAllByAccAndCategory(transactions: List[Transaction], statsAcumulator: List[Stat2] = List()): List[Stat2] = {
+  def processAllByAccAndCategory(transactions: List[Transaction], statsAcumulator: List[StatQ2] = List()): List[StatQ2] = {
     transactions match {
       case Nil => statsAcumulator
       case values => processAllByAccAndCategory(
@@ -25,8 +25,7 @@ object Question2 extends IOApp {
     val stats = processAllByAccAndCategory(transactions, List())
     val tableText = Render.run(stats.sortBy(_.account),
       """
-        |Account|Category|Avg
-        |""".stripMargin)
+        |Account|Category|Avg""".stripMargin)
 
     IO{println(tableText)}.as(ExitCode.Success)
   }

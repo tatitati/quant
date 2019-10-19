@@ -1,7 +1,7 @@
 package quant.OpTransactionsSpec
 
 import org.scalatest.FunSuite
-import quant.{OpTransactions, Stat2, Transaction}
+import quant.{OpTransactions, StatQ2, Transaction}
 
 class SumByAccountAndCategorySpec extends FunSuite{
   test("question2 concept") {
@@ -22,9 +22,9 @@ class SumByAccountAndCategorySpec extends FunSuite{
     )
 
     assert(List(
-      Stat2("accA","cat1",20888.0,2),
-      Stat2("accB","cat1",10000.0,1),
-      Stat2("accA","cat2",555.0,1)
+      StatQ2("accA","cat1",20888.0,2),
+      StatQ2("accB","cat1",10000.0,1),
+      StatQ2("accA","cat2",555.0,1)
     ) == statsD)
   }
 }

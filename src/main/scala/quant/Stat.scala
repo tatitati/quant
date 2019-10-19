@@ -4,14 +4,14 @@ sealed trait Stat {
   def toTable(): String
 }
 
-final case class Stat1(day: Int, total: Double) extends Stat{
+final case class StatQ1(day: Int, total: Double) extends Stat{
   def toTable(): String = {
     s"""
        |$day|$total""".stripMargin
   }
 }
 
-final case class Stat2(account: String, category: String, total: Double, fromNItems: Int) extends Stat{
+final case class StatQ2(account: String, category: String, total: Double, fromNItems: Int) extends Stat{
   def toTable(): String = {
     val avg = total/fromNItems
     s"""
@@ -19,7 +19,7 @@ final case class Stat2(account: String, category: String, total: Double, fromNIt
   }
 }
 
-final case class Stat3(
+final case class StatQ3(
       day: Int,
       account: String,
       max: Double,
