@@ -40,9 +40,9 @@ object OpTransactions {
     }
   }
 
-  def getWindow(transaction: Transaction, accStats: List[StatQ3]): List[StatQ3] = {
+  def getStatWindow(transaction: Transaction, accStats: List[StatQ3]): List[StatQ3] = {
     accStats.filter { stat =>
-      stat.day > transaction.transactionDay - 6 &&
+      stat.day >= transaction.transactionDay - 5 &&
       stat.day < transaction.transactionDay &&
       stat.account == transaction.accountId
     }
@@ -58,40 +58,25 @@ object OpTransactions {
 
 
 
-  def combineWindow(transaction: Transaction, listOfStats: List[StatQ3]): StatQ3 = {
-    listOfStats match {
-      case Nil => StatQ3(transaction.transactionDay, transaction.accountId, 0, 0, 0)
+  def processWindowByTransaction(transaction: Transaction, historicalStats: List[StatQ3] = List()): StatQ3 = {
+    historicalStats match {
+      case Nil => StatQ3(transaction.transactionDay, transaction.accountId, max = 0, total = 0, fromNItems = 0)
       case _ => StatQ3(
         transaction.transactionDay,
         transaction.accountId,
-        listOfStats.maxBy(_.max).max,
-        listOfStats.foldLeft(0.0)(_ + _.total),
-        listOfStats.foldLeft(0)(_ + _.fromNItems),
+        historicalStats.maxBy(_.max).max,
+        historicalStats.foldLeft(0.0)(_ + _.total),
+        historicalStats.foldLeft(0)(_ + _.fromNItems),
         Map(
-          "AA" -> listOfStats.foldLeft(0.0)(_ + _.categoryMapTotal("AA")),
+          "AA" -> historicalStats.foldLeft(0.0)(_ + _.categoryMapTotal("AA")),
           "BB" -> 0,
-          "CC" -> listOfStats.foldLeft(0.0)(_ + _.categoryMapTotal("CC")),
+          "CC" -> historicalStats.foldLeft(0.0)(_ + _.categoryMapTotal("CC")),
           "DD" -> 0,
           "EE" -> 0,
-          "FF" -> listOfStats.foldLeft(0.0)(_ + _.categoryMapTotal("FF")),
+          "FF" -> historicalStats.foldLeft(0.0)(_ + _.categoryMapTotal("FF")),
           "GG" -> 0
         )
       )
-    }
-  }
-
-  def getFullStat(transaction: Transaction, statsAcumulator: List[StatQ3] = List()): List[StatQ3] = {
-    val windowStats: List[StatQ3] = getWindow(transaction, statsAcumulator)
-
-    windowStats match {
-      case Nil => statsAcumulator :+ StatQ3(
-          transaction.transactionDay,
-          transaction.accountId,
-          0,
-          0,
-          1
-        )
-      case listOfStats => statsAcumulator :+ combineWindow(transaction, listOfStats)
     }
   }
 }

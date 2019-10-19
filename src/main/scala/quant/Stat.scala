@@ -34,6 +34,7 @@ final case class StatQ3(
 
   def toTable(): String = {
     val avg = total / fromNItems
-    s"$day|$account|$max|$avg|${categoryMapTotal("AA")}|${categoryMapTotal("CC")}|${categoryMapTotal("FF")}".stripMargin
+    s"""
+       |$day|$account|$max|$avg|${categoryMapTotal("AA")}|${categoryMapTotal("CC")}|${categoryMapTotal("FF")}""".stripMargin
   }
 }
