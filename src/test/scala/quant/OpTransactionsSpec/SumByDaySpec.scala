@@ -22,19 +22,4 @@ class SumByDaySpec extends FunSuite{
 
     assert(List(Stat1(2,10000.0), Stat1(3,60000.0)) == sorted)
   }
-
-  test("I can automate the whole process") {
-    val transactions = List(
-      Transaction("any","any",3,"any",10000),
-      Transaction("any","any",2,"any",10000),
-      Transaction("any","any",3,"any",50000)
-    )
-
-    val result = OpTransactions.processAllByDay(transactions, List())
-
-    assert(List(
-      Stat1(3,60000.0),
-      Stat1(2,10000.0)
-    ) == result)
-  }
 }
