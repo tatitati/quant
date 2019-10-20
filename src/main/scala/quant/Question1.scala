@@ -26,11 +26,11 @@ object Question1 extends IOApp {
 
     val stats: IO[Either[ErrorRead, DayMapStat]] = EitherT(transactions).map(analyze(_)).value
 
-    val body = EitherT(stats).map((x: DayMapStat) =>
-      Render.run(x.values.toList, "\nDay|Total\n")
+    val tableText = EitherT(stats).map((x: DayMapStat) =>
+      Render.run(x.values.toList.sortBy(_.day), "\nDay|Total\n")
     ).value
 
-    println(body.unsafeRunSync())
+    println(tableText.unsafeRunSync())
     IO{println("asdf")}.as(ExitCode.Success)
   }
 }

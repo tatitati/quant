@@ -1,13 +1,18 @@
 package quant
 
+import cats.data.EitherT
 import cats.effect._
 import cats.syntax.all._
+import quant.RepositoryTransactions.ListTransaction
+
 import scala.annotation.tailrec
 
 object Question2 extends IOApp {
 
+  type AccCatMapStat = Map[(String, String), StatByAccCat]
+
   @tailrec
-  def analyze(transactions: List[Transaction], statsAcumulator: Map[(String, String), StatByAccCat] = Map()): Map[(String, String), StatByAccCat] = {
+  def analyze(transactions: List[Transaction], statsAcumulator: AccCatMapStat = Map()): AccCatMapStat = {
     transactions match {
       case Nil => statsAcumulator
       case _ => analyze(
@@ -17,14 +22,15 @@ object Question2 extends IOApp {
   }
 
   override def run(args: List[String]): IO[ExitCode] = {
-//    val transactions: List[Transaction] = RepositoryTransactions.findAll("/transactions.txt")
-//
-//    val stats = analyze(transactions)
-//    val tableText = Render.run(stats.values.toList.sortBy(_.account),
-//      """
-//        |Account|Category|Avg""".stripMargin)
-//
-//    IO{println(tableText)}.as(ExitCode.Success)
+    val transactions: IO[Either[ErrorRead, ListTransaction]] = RepositoryTransactions.findAll("/transactions.txt")
+
+    val stats: IO[Either[ErrorRead, AccCatMapStat]] = EitherT(transactions).map(analyze(_)).value
+
+    val tableText = EitherT(stats).map((x: AccCatMapStat) =>
+      Render.run(x.values.toList.sortBy(_.account), "\nAccount|Category|Avg\n")
+    ).value
+
+    println(tableText.unsafeRunSync())
     IO{println("asdfasdf")}.as(ExitCode.Success)
   }
 }
