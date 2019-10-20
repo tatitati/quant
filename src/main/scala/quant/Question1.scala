@@ -2,9 +2,8 @@ package quant
 
 import cats.data.{EitherT}
 import cats.effect._
-import quant.RepositoryTransactions.{ListTransaction, OrListTransaction}
+import quant.RepositoryTransactions.ListTransaction
 import cats.implicits._
-
 import scala.annotation.tailrec
 
 object Question1 extends IOApp {

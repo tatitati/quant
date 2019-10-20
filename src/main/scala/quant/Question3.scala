@@ -3,9 +3,7 @@ package quant
 import cats.data.EitherT
 import cats.effect._
 import cats.syntax.all._
-import quant.Question2.{AccCatMapStat, analyze}
 import quant.RepositoryTransactions.ListTransaction
-
 import scala.annotation.tailrec
 
 object Question3 extends IOApp {
