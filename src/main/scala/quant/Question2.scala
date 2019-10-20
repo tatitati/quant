@@ -13,8 +13,7 @@ object Question2 extends IOApp {
       case Nil => statsAcumulator
       case _ => analyze(
         transactions.tail,
-        OpTransactions.processByAccountAndCatNewTransaction(transactions.head, statsAcumulator)
-      )
+        OpTransactions.processByAccountAndCatNewTransaction(transactions.head, statsAcumulator))
     }
   }
 

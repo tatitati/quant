@@ -3,7 +3,6 @@ package quant
 import cats.effect._
 import cats.syntax.all._
 import quant.OpTransactions.ListTransaction
-
 import scala.annotation.tailrec
 
 object Question1 extends IOApp {
@@ -12,11 +11,9 @@ object Question1 extends IOApp {
   def analyze(transactions: List[Transaction], statsAcumulator: Map[Int, StatQ1] = Map()): Map[Int, StatQ1] = {
     transactions match {
       case Nil => statsAcumulator
-      case _ =>
-        analyze(
+      case _ => analyze(
           transactions.tail,
-          OpTransactions.processByDayNewTrasaction(transactions.head, statsAcumulator)
-        )
+          OpTransactions.processByDayNewTrasaction(transactions.head, statsAcumulator))
     }
   }
 

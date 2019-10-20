@@ -13,10 +13,7 @@ object Question3 extends IOApp {
       case Nil => statsAcumulator
       case _ => analyze(
           transactions.tail,
-          OpTransactions.processTransactionInWindow(
-            transactions.head,
-            statsAcumulator)
-        )
+          OpTransactions.processTransactionInWindow(transactions.head, statsAcumulator))
     }
   }
 
