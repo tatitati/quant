@@ -1,6 +1,5 @@
 package quant
 
-import cats.data.EitherT
 import cats.effect._
 import cats.syntax.all._
 import quant.OpTransactions.ListTransaction

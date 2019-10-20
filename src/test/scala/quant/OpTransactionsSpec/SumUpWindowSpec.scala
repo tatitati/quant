@@ -4,19 +4,7 @@ import org.scalatest.FunSuite
 import quant.{OpTransactions, StatQ3, Transaction}
 
 class SumUpWindowSpec extends FunSuite {
-
-  test("For a transaction with empty window") {
-    val givenTransaction = Transaction("any","accA",8,"BB",100)
-    val givenWindowStatsForTransaction = List()
-
-    val statTransaction: StatQ3 = OpTransactions.sumUpWindow(givenTransaction, givenWindowStatsForTransaction)
-
-    assert(
-      StatQ3(8,"accA",max = 0, total = 0, fromNItems = 0, catAA = 0, catCC = 0, catFF = 0)
-        == statTransaction)
-  }
-
-  test("For a transaction with no-empty window") {
+  test("I can sumup previous historical stats to generate the stat of the last day") {
     val givenTransaction = Transaction("any","accA",8,"BB",100)
     val givenWindowStatsForTransaction = List(
       StatQ3(3, "accA", max = 20, total = 20, fromNItems = 3, catAA = 10, catCC = 50, catFF=100),
@@ -28,6 +16,17 @@ class SumUpWindowSpec extends FunSuite {
 
     assert(
       StatQ3(8,"accA",max = 50.0, total = 170.0, fromNItems = 6, catAA = 60, catCC = 450, catFF = 32100)
-      == statTransaction)
+      == statTransaction, "stat for day 8 is based on history of day 3, 5, 6")
+  }
+
+  test("Edge case: history stat is empty") {
+    val givenTransaction = Transaction("any","accA",8,"BB",100)
+    val givenWindowStatsForTransaction = List()
+
+    val statTransaction: StatQ3 = OpTransactions.sumUpWindow(givenTransaction, givenWindowStatsForTransaction)
+
+    assert(
+      StatQ3(8,"accA",max = 0, total = 0, fromNItems = 0, catAA = 0, catCC = 0, catFF = 0)
+        == statTransaction)
   }
 }
