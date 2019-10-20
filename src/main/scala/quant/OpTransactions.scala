@@ -46,7 +46,7 @@ object OpTransactions {
     }
   }
 
-  def processWindowByTransaction(transaction: Transaction, statsWindow: List[StatQ3] = List()): StatQ3 = {
+  def sumUpWindow(transaction: Transaction, statsWindow: List[StatQ3] = List()): StatQ3 = {
     val statZero = StatQ3(
       transaction.transactionDay,
       transaction.accountId,

@@ -2,7 +2,7 @@ package quant
 
 import cats.effect._
 import cats.syntax.all._
-import quant.OpTransactions.{ListTransaction, getWindowForTransaction, processWindowByTransaction}
+import quant.OpTransactions.{ListTransaction, getWindowForTransaction, sumUpWindow}
 
 import scala.annotation.tailrec
 
