@@ -10,11 +10,11 @@ import scala.annotation.tailrec
 object Question1 extends IOApp {
 
   @tailrec
-  def processAllByDay(transactions: List[Transaction], statsAcumulator: List[StatQ1]): List[StatQ1] = {
+  def analyze(transactions: List[Transaction], statsAcumulator: List[StatQ1]): List[StatQ1] = {
     transactions match {
       case Nil => statsAcumulator
       case transactions =>
-        processAllByDay(
+        analyze(
           transactions.tail,
           OpTransactions.processByDayNewTrasaction(transactions.head, statsAcumulator)
         )
@@ -24,7 +24,7 @@ object Question1 extends IOApp {
   override def run(args: List[String]): IO[ExitCode] = {
     val transactions: ListTransaction = RepositoryTransactions.findAll("/transactions.txt")
 
-    val stats = processAllByDay(transactions, List())
+    val stats = analyze(transactions, List())
     val tableText = Render.run(stats,
       """
         |Day|Total""".stripMargin)
