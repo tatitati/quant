@@ -18,11 +18,9 @@ class SumByDaySpec extends FunSuite{
       Transaction("EEE","any",3,"any",50000), statsB
     )
 
-    val sorted = statsC.sortBy(_.day)
-
     assert(List(
       StatQ1(2,10000.0),
       StatQ1(3,60000.0)
-    ) == sorted)
+    ) == statsC.values.toList)
   }
 }

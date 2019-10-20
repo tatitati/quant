@@ -39,5 +39,8 @@ class ExperimentsSpec extends FunSuite {
     //      (black,madrid) -> List(Person(sancho,madrid,black)),
     //      (white,madrid) -> List(Person(fran,madrid,white), Person(diego,madrid,white)))
 
+    // CONTAINS?
+    println(mygroup.get((("black","madrid")))) //Some(List(Person(sancho,madrid,black)))
+    println(mygroup.get((("yellow","madrid")))) //None
   }
 }

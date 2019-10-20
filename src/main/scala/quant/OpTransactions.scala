@@ -7,16 +7,14 @@ import scala.annotation.tailrec
 object OpTransactions {
   type ListTransaction = List[Transaction]
 
-  def processByDayNewTrasaction(transaction: Transaction, statsAcumulator: List[StatQ1] = List()): List[StatQ1] = {
-    val foundStatForDay: List[Int] = statsAcumulator.zipWithIndex.filter(_._1.day == transaction.transactionDay).map(_._2)
+  def processByDayNewTrasaction(transaction: Transaction, statsAcumulator: Map[Int, StatQ1] = Map()): Map[Int, StatQ1] = {
+    val day = transaction.transactionDay
 
-    foundStatForDay match {
-      case Nil => statsAcumulator :+ StatQ1(transaction.transactionDay, transaction.transactionAmount)
-      case List(idx) => statsAcumulator.updated(idx,
-        StatQ1(
-          statsAcumulator(idx).day,
-          statsAcumulator(idx).total + transaction.transactionAmount)
-      )
+      statsAcumulator.get(day) match {
+      case None => statsAcumulator + (day -> StatQ1(transaction.transactionDay, transaction.transactionAmount))
+      case Some(stat) =>
+        val udpated = statsAcumulator - day
+        udpated + (day -> stat.updateWithTransaction(transaction))
     }
   }
 

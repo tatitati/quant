@@ -9,6 +9,13 @@ final case class StatQ1(day: Int, total: Double) extends Stat{
     s"""
        |$day|$total""".stripMargin
   }
+
+  def updateWithTransaction(transaction: Transaction): StatQ1 = {
+    StatQ1(
+      this.day,
+      this.total + transaction.transactionAmount
+    )
+  }
 }
 
 final case class StatQ2(account: String, category: String, total: Double, fromNItems: Int) extends Stat{

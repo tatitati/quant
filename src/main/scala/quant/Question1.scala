@@ -9,7 +9,7 @@ import scala.annotation.tailrec
 object Question1 extends IOApp {
 
   @tailrec
-  def analyze(transactions: List[Transaction], statsAcumulator: List[StatQ1]): List[StatQ1] = {
+  def analyze(transactions: List[Transaction], statsAcumulator: Map[Int, StatQ1] = Map()): Map[Int, StatQ1] = {
     transactions match {
       case Nil => statsAcumulator
       case transactions =>
@@ -23,10 +23,11 @@ object Question1 extends IOApp {
   override def run(args: List[String]): IO[ExitCode] = {
     val transactions: ListTransaction = RepositoryTransactions.findAll("/transactions.txt")
 
-    val stats = analyze(transactions, List())
-    val tableText = Render.run(stats,
+    val stats = analyze(transactions)
+    val tableText = Render.run(stats.values.toList,
       """
         |Day|Total""".stripMargin)
+
 
     IO{println(tableText)}.as(ExitCode.Success)
   }
