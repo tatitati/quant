@@ -1,7 +1,6 @@
 package quant
 
 object OpTransactions {
-  type ListTransaction = List[Transaction]
   case class KeyWindow(dayrange: String, account: String)
 
   def processByDayNewTrasaction(transaction: Transaction, statsAcumulator: Map[Int, StatByDay] = Map()): Map[Int, StatByDay] = {

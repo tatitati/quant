@@ -1,11 +1,10 @@
 package quant
 
-import quant.OpTransactions.ListTransaction
 import scala.io.Source
 
 object RepositoryTransactions {
 
-  def findAll(resourceFilename: String): ListTransaction = {
+  def findAll(resourceFilename: String): List[Transaction] = {
     val file = getClass.getResource(resourceFilename)
 
     for {

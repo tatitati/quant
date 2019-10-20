@@ -2,7 +2,6 @@ package quant
 
 import cats.effect._
 import cats.syntax.all._
-import quant.OpTransactions.ListTransaction
 import scala.annotation.tailrec
 
 object Question1 extends IOApp {
@@ -18,7 +17,7 @@ object Question1 extends IOApp {
   }
 
   override def run(args: List[String]): IO[ExitCode] = {
-    val transactions: ListTransaction = RepositoryTransactions.findAll("/transactions.txt")
+    val transactions: List[Transaction] = RepositoryTransactions.findAll("/transactions.txt")
 
     val stats = analyze(transactions)
     val tableText = Render.run(stats.values.toList.sortBy(_.day),

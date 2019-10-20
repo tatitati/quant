@@ -1,7 +1,6 @@
 package quant
 
 import org.scalatest.FunSuite
-import quant.OpTransactions.ListTransaction
 
 import scala.io.Source
 
