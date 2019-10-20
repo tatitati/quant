@@ -24,6 +24,15 @@ final case class StatQ2(account: String, category: String, total: Double, fromNI
     s"""
        |$account|$category|$avg""".stripMargin
   }
+
+  def updateWithTransaction(transaction: Transaction): StatQ2 = {
+    StatQ2(
+      this.account,
+      this.category,
+      this.total + transaction.transactionAmount,
+      this.fromNItems + 1
+    )
+  }
 }
 
 final case class StatQ3(

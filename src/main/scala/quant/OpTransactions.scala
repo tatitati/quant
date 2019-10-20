@@ -18,25 +18,15 @@ object OpTransactions {
     }
   }
 
-  def processByAccountAndCatNewTransaction(transaction: Transaction, statsAcumulator: List[StatQ2] = List()): List[StatQ2] = {
-    val statMatchedIdx: List[Int] = statsAcumulator
-      .zipWithIndex
-      .filter(stat =>
-        stat._1.account == transaction.accountId
-        && stat._1.category == transaction.category
-      )
-      .map(_._2)
+  def processByAccountAndCatNewTransaction(transaction: Transaction, statsAcumulator: Map[(String, String), StatQ2] = Map()):  Map[(String, String), StatQ2] = {
+    val acc = transaction.accountId
+    val cat = transaction.category
 
-    statMatchedIdx match {
-      case Nil => statsAcumulator :+ StatQ2(transaction.accountId, transaction.category, transaction.transactionAmount, 1)
-      case List(idx) => statsAcumulator.updated(
-          idx,
-          StatQ2(
-            statsAcumulator(idx).account,
-            statsAcumulator(idx).category,
-            statsAcumulator(idx).total + transaction.transactionAmount,
-            statsAcumulator(idx).fromNItems + 1)
-        )
+    statsAcumulator.get((acc, cat)) match {
+      case None => statsAcumulator + ((acc, cat) -> StatQ2(transaction.accountId, transaction.category, transaction.transactionAmount, 1))
+      case Some(stat) =>
+        val udpated = statsAcumulator - ((acc, cat))
+        udpated + ((acc, cat) -> stat.updateWithTransaction(transaction))
     }
   }
 

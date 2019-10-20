@@ -24,7 +24,7 @@ object Question1 extends IOApp {
     val transactions: ListTransaction = RepositoryTransactions.findAll("/transactions.txt")
 
     val stats = analyze(transactions)
-    val tableText = Render.run(stats.values.toList,
+    val tableText = Render.run(stats.values.toList.sortBy(_.day),
       """
         |Day|Total""".stripMargin)
 

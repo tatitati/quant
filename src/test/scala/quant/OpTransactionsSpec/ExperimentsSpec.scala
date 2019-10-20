@@ -32,7 +32,7 @@ class ExperimentsSpec extends FunSuite {
     //    Person(diego,madrid,white))
 
 
-    mygroup += (("black", "madrid") -> List(Person("sancho", "madrid", "black")))
+    val updated: Map[(String, String), List[Person]] = mygroup += (("black", "madrid") -> List(Person("sancho", "madrid", "black")))
 
     //    Map(
     //      (black,barcelona) -> List(Person(raul,barcelona,black)),
