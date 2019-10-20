@@ -13,16 +13,16 @@ object Question3 extends IOApp {
     transactions match {
       case Nil => statsAcumulator
       case values => {
-        val windowForTransaction = getWindowForTransaction(values.head, values)
+        val windowForTransaction = getWindowForTransaction(transactions.head, transactions.tail)
         val windowStats = OpTransactions.convertWindowTrToWindowStat(windowForTransaction)
-        analyze(values.tail, windowStats)
+        analyze(transactions.tail, windowStats)
       }
     }
   }
 
   override def run(args: List[String]): IO[ExitCode] = {
     val transactions: ListTransaction = RepositoryTransactions.findAll("/transactions.txt")
-    val stats = analyze(transactions)
+    val stats = analyze(transactions.reverse)
     val tableText = Render.run(stats,
       """
         |Day|Account|Max|Avg|AAcat|CCcat|FFcat""".stripMargin)
