@@ -11,7 +11,7 @@ object Question3 extends IOApp {
   def analyze(transactions: List[Transaction], statsAcumulator: Map[OpTransactions.KeyWindow, StatQ3] = Map()): Map[OpTransactions.KeyWindow, StatQ3]  = {
     transactions match {
       case Nil => statsAcumulator
-      case values => analyze(
+      case _ => analyze(
           transactions.tail,
           OpTransactions.processTransactionInWindow(
             transactions.head,

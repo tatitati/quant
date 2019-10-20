@@ -11,9 +11,9 @@ object Question2 extends IOApp {
   def analyze(transactions: List[Transaction], statsAcumulator: Map[(String, String), StatQ2] = Map()): Map[(String, String), StatQ2] = {
     transactions match {
       case Nil => statsAcumulator
-      case values => analyze(
-        values.tail,
-        OpTransactions.processByAccountAndCatNewTransaction(values.head, statsAcumulator)
+      case _ => analyze(
+        transactions.tail,
+        OpTransactions.processByAccountAndCatNewTransaction(transactions.head, statsAcumulator)
       )
     }
   }

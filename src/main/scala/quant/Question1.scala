@@ -12,7 +12,7 @@ object Question1 extends IOApp {
   def analyze(transactions: List[Transaction], statsAcumulator: Map[Int, StatQ1] = Map()): Map[Int, StatQ1] = {
     transactions match {
       case Nil => statsAcumulator
-      case transactions =>
+      case _ =>
         analyze(
           transactions.tail,
           OpTransactions.processByDayNewTrasaction(transactions.head, statsAcumulator)
