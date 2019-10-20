@@ -3,7 +3,7 @@ package quant.OpTransactionsSpec
 import org.scalatest.FunSuite
 import quant.{OpTransactions, StatQ2, StatQ3, Transaction}
 
-class ConvertWindowTrToWindowStatSpec extends FunSuite {
+class ProcessTransactinoInWindowSpec extends FunSuite {
   test("Question3: Can convert list of transactions into a list of stats") {
     val transactions: List[Transaction] = List(
       Transaction("any","accA",4,"BB",100),
