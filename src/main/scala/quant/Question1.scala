@@ -24,13 +24,12 @@ object Question1 extends IOApp {
   override def run(args: List[String]): IO[ExitCode] = {
     val transactions: IO[Either[ErrorRead, ListTransaction]] = RepositoryTransactions.findAll("/transactions.txt")
 
-    val stats: IO[Either[ErrorRead, DayMapStat]] = EitherT(transactions).map(analyze(_)).value
+    val output: IO[Either[ErrorRead, Unit]] = EitherT(transactions).map{x: List[Transaction] =>
+      val stats: DayMapStat = analyze(x)
+      val body: String = Render.run(stats.values.toList.sortBy(_.day), "\nDay|Total\n")
+      println(body)
+    }.value
 
-    val tableText = EitherT(stats).map((x: DayMapStat) =>
-      Render.run(x.values.toList.sortBy(_.day), "\nDay|Total\n")
-    ).value
-
-    val output: IO[Either[ErrorRead, Unit]] = EitherT(tableText).map(x=> println(x)).value
     output.as(ExitCode.Success)
   }
 }
