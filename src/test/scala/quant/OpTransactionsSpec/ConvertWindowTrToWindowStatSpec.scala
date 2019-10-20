@@ -12,7 +12,7 @@ class ConvertWindowTrToWindowStatSpec extends FunSuite {
       Transaction("any","accB",3,"BB",5)
     )
 
-    val result = OpTransactions.convertWindowTrToWindowStat(transactions)
+    val result = OpTransactions.processTransactionInWindow(transactions)
 
     assert(List(
       StatQ3(4,"accA",max = 100.0,total = 200.0,fromNItems = 2,catAA = 100.0,catCC =0.0, catFF = 0.0),

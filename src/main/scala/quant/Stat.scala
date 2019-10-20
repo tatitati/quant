@@ -1,5 +1,7 @@
 package quant
 
+import scala.util.{Success, Try}
+
 sealed trait Stat {
   def toTable(): String
 }
@@ -47,7 +49,8 @@ final case class StatQ3(
   ) extends Stat {
 
   def toTable(): String = {
-    val avg = total / fromNItems
+    val avg = if(fromNItems == 0) 0 else total / fromNItems
+
     s"""
        |$day|$account|$max|$avg|$catAA|$catCC|$catFF""".stripMargin
   }

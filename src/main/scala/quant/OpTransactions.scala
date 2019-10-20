@@ -1,11 +1,12 @@
 package quant
 
-import quant.OpTransactions.convertWindowTrToWindowStat
+import quant.OpTransactions.processTransactionInWindow
 
 import scala.annotation.tailrec
 
 object OpTransactions {
   type ListTransaction = List[Transaction]
+  case class KeyWindow(dayrange: String, account: String)
 
   def processByDayNewTrasaction(transaction: Transaction, statsAcumulator: Map[Int, StatQ1] = Map()): Map[Int, StatQ1] = {
     val day = transaction.transactionDay
@@ -30,14 +31,15 @@ object OpTransactions {
     }
   }
 
-  @tailrec
-  def convertWindowTrToWindowStat(transactions: List[Transaction], statsAcc: List[StatQ3] = List()): List[StatQ3] = {
-      transactions match {
-        case Nil => statsAcc
-        case values =>
-          val stats = updateStatsAccFromTransaction(transactions, statsAcc)
-          convertWindowTrToWindowStat(transactions.tail, stats)
-      }
+  def processTransactionInWindow(key: KeyWindow, trans: Transaction, statAcc: Map[KeyWindow, StatQ3]): Map[KeyWindow, StatQ3] = {
+    val stat = statAcc.get(key)
+
+    stat match {
+      case None => statAcc + (key -> StatQ3(trans.transactionDay, trans.accountId ,0, 0, 0, 0, 0, 0))
+      case Some(stat) =>
+        val updated = statAcc - (key)
+        updated + (key -> stat.updateWithTransaction(trans))
+    }
   }
 
   def updateStatsAccFromTransaction(transactions: List[Transaction], statsAcc: List[StatQ3] = List()): List[StatQ3] = {
@@ -79,12 +81,9 @@ object OpTransactions {
     }
   }
 
-  def getWindowForTransaction(transaction: Transaction, allTransactions: List[Transaction]): List[Transaction] = {
-    allTransactions.filter { any =>
-      any.transactionDay >= transaction.transactionDay - 5 &&
-      any.transactionDay < transaction.transactionDay &&
-      any.accountId == transaction.accountId
-    }
+  def getKeyWindow(transaction: Transaction): KeyWindow = {
+    val windowKey = transaction.transactionDay-1 + "-" + (transaction.transactionDay-5)
+    KeyWindow(windowKey, transaction.accountId)
   }
 
   def sumUpWindow(transaction: Transaction, statsWindow: List[StatQ3] = List()): StatQ3 = {

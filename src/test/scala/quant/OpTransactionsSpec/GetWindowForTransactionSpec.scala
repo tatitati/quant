@@ -15,7 +15,7 @@ class GetWindowForTransactionSpec extends FunSuite {
         Transaction("any","accA",8,"CC",999),
       )
 
-      val result = OpTransactions.getWindowForTransaction(givenTransaction, givenListOfTransactions)
+      val result = OpTransactions.getKeyWindow(givenTransaction, givenListOfTransactions)
 
       assert(List(
         Transaction("any","accA",4,"BB",100),
