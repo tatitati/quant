@@ -2,7 +2,7 @@ package quant
 
 import cats.effect._
 import cats.syntax.all._
-import quant.OpTransactions.{ListTransaction, getKeyWindow}
+import quant.OpTransactions.ListTransaction
 import scala.annotation.tailrec
 
 object Question3 extends IOApp {

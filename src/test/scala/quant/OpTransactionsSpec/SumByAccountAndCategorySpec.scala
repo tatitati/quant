@@ -21,10 +21,10 @@ class SumByAccountAndCategorySpec extends FunSuite{
       Transaction("any","accA",1,"cat2",555), statsC
     )
 
-    assert(List(
-      StatQ2("accA","cat1",20888.0,2),
-      StatQ2("accB","cat1",10000.0,1),
-      StatQ2("accA","cat2",555.0,1)
-    ) == statsD)
+    assert(Map(
+      ("accB","cat1") -> StatQ2("accB","cat1",10000.0,1),
+      ("accA","cat1") -> StatQ2("accA","cat1",20888.0,2),
+      ("accA","cat2") -> StatQ2("accA","cat2",555.0,1))
+      == statsD)
   }
 }

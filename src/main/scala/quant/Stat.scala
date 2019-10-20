@@ -1,9 +1,8 @@
 package quant
 
-import scala.util.{Success, Try}
-
 sealed trait Stat {
   def toTable(): String
+  def updateWithTransaction(transaction: Transaction): Stat
 }
 
 final case class StatQ1(day: Int, total: Double) extends Stat{
@@ -65,19 +64,6 @@ final case class StatQ3(
       {if(transaction.category == "AA") this.catAA + transaction.transactionAmount else this.catAA},
       {if(transaction.category == "CC") this.catCC + transaction.transactionAmount else this.catCC},
       {if(transaction.category == "FF") this.catFF + transaction.transactionAmount else this.catFF},
-    )
-  }
-
-  def sumUp(withStat: StatQ3): StatQ3 = {
-    StatQ3(
-      this.day,
-      this.account,
-      List(this.max, withStat.max).max,
-      this.total + withStat.total,
-      this.fromNItems + withStat.fromNItems,
-      this.catAA + withStat.catAA,
-      this.catCC + withStat.catCC,
-      this.catFF + withStat.catFF
     )
   }
 }
