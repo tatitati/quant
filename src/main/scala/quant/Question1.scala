@@ -8,7 +8,7 @@ import scala.annotation.tailrec
 object Question1 extends IOApp {
 
   @tailrec
-  def analyze(transactions: List[Transaction], statsAcumulator: Map[Int, StatQ1] = Map()): Map[Int, StatQ1] = {
+  def analyze(transactions: List[Transaction], statsAcumulator: Map[Int, StatByDay] = Map()): Map[Int, StatByDay] = {
     transactions match {
       case Nil => statsAcumulator
       case _ => analyze(

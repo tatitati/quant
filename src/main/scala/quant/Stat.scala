@@ -5,29 +5,29 @@ sealed trait Stat {
   def updateWithTransaction(transaction: Transaction): Stat
 }
 
-final case class StatQ1(day: Int, total: Double) extends Stat{
+final case class StatByDay(day: Int, total: Double) extends Stat{
   def toTable(): String = {
     s"""
        |$day|$total""".stripMargin
   }
 
-  def updateWithTransaction(transaction: Transaction): StatQ1 = {
-    StatQ1(
+  def updateWithTransaction(transaction: Transaction): StatByDay = {
+    StatByDay(
       this.day,
       this.total + transaction.transactionAmount
     )
   }
 }
 
-final case class StatQ2(account: String, category: String, total: Double, fromNItems: Int) extends Stat{
+final case class StatByAccCat(account: String, category: String, total: Double, fromNItems: Int) extends Stat{
   def toTable(): String = {
     val avg = total/fromNItems
     s"""
        |$account|$category|$avg""".stripMargin
   }
 
-  def updateWithTransaction(transaction: Transaction): StatQ2 = {
-    StatQ2(
+  def updateWithTransaction(transaction: Transaction): StatByAccCat = {
+    StatByAccCat(
       this.account,
       this.category,
       this.total + transaction.transactionAmount,
@@ -36,7 +36,7 @@ final case class StatQ2(account: String, category: String, total: Double, fromNI
   }
 }
 
-final case class StatQ3(
+final case class StatByWindowAcc(
       day: Int,
       account: String,
       max: Double,
@@ -54,8 +54,8 @@ final case class StatQ3(
        |$day|$account|$max|$avg|$catAA|$catCC|$catFF""".stripMargin
   }
 
-  def updateWithTransaction(transaction: Transaction): StatQ3 = {
-    StatQ3(
+  def updateWithTransaction(transaction: Transaction): StatByWindowAcc = {
+    StatByWindowAcc(
       this.day,
       this.account,
       List(this.max, transaction.transactionAmount).max,

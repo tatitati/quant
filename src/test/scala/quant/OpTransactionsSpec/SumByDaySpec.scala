@@ -1,7 +1,7 @@
 package quant.OpTransactionsSpec
 
 import org.scalatest.FunSuite
-import quant.{OpTransactions, StatQ1, Transaction}
+import quant.{OpTransactions, StatByDay, Transaction}
 
 class SumByDaySpec extends FunSuite{
   test("OpTransactions.sumByDay() update stats on they are received")
@@ -19,8 +19,8 @@ class SumByDaySpec extends FunSuite{
     )
 
     assert(List(
-      StatQ1(2,10000.0),
-      StatQ1(3,60000.0)
+      StatByDay(2,10000.0),
+      StatByDay(3,60000.0)
     ) == statsC.values.toList)
   }
 }
