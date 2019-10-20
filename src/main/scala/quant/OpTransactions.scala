@@ -1,7 +1,5 @@
 package quant
 
-import cats.implicits._
-
 object OpTransactions {
   type ListTransaction = List[Transaction]
 
@@ -40,43 +38,29 @@ object OpTransactions {
     }
   }
 
-  def getStatWindow(transaction: Transaction, accStats: List[StatQ3]): List[StatQ3] = {
-    accStats.filter { stat =>
-      stat.day >= transaction.transactionDay - 5 &&
-      stat.day < transaction.transactionDay &&
-      stat.account == transaction.accountId
+  def getWindowForTransaction(transaction: Transaction, allTransactions: List[Transaction]): List[Transaction] = {
+    allTransactions.filter { x =>
+      x.transactionDay >= transaction.transactionDay - 5 &&
+      x.transactionDay < transaction.transactionDay &&
+      x.accountId == transaction.accountId
     }
   }
 
+  def processWindowByTransaction(transaction: Transaction, statsWindow: List[StatQ3] = List()): StatQ3 = {
+    val statZero = StatQ3(
+      transaction.transactionDay,
+      transaction.accountId,
+      max = 0,
+      total = 0,
+      fromNItems = 0,
+      catAA = 0,
+      catCC = 0,
+      catFF = 0
+    )
 
-
-
-
-
-
-
-
-
-
-  def processWindowByTransaction(transaction: Transaction, historicalStats: List[StatQ3] = List()): StatQ3 = {
-    historicalStats match {
-      case Nil => StatQ3(transaction.transactionDay, transaction.accountId, max = 0, total = 0, fromNItems = 0)
-      case _ => StatQ3(
-        transaction.transactionDay,
-        transaction.accountId,
-        historicalStats.maxBy(_.max).max,
-        historicalStats.foldLeft(0.0)(_ + _.total),
-        historicalStats.foldLeft(0)(_ + _.fromNItems),
-        Map(
-          "AA" -> historicalStats.foldLeft(0.0)(_ + _.categoryMapTotal("AA")),
-          "BB" -> 0,
-          "CC" -> historicalStats.foldLeft(0.0)(_ + _.categoryMapTotal("CC")),
-          "DD" -> 0,
-          "EE" -> 0,
-          "FF" -> historicalStats.foldLeft(0.0)(_ + _.categoryMapTotal("FF")),
-          "GG" -> 0
-        )
-      )
+    statsWindow match {
+      case Nil => statZero
+      case _ => statsWindow.foldLeft(statZero)( _ sumUp _)
     }
   }
 }

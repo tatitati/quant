@@ -4,57 +4,30 @@ import org.scalatest.FunSuite
 import quant.{OpTransactions, StatQ3, Transaction}
 
 class ProcessWindowByTransactionSpec extends FunSuite {
-  test("I can create the new stat for the transaction in case there is no hitorial for this transactions") {
-    val givenTransaction = Transaction("any","accA",6,"BB",20000)
 
-    val statTransaction: StatQ3 = OpTransactions.processWindowByTransaction(givenTransaction)
+  test("For a transaction with empty window") {
+    val givenTransaction = Transaction("any","accA",8,"BB",100)
+    val givenWindowStatsForTransaction = List()
 
-    assert(
-      StatQ3(
-        6,
-        "accA",
-        max = 0.0,
-        total = 0.0,
-        fromNItems = 0,
-        Map("AA" -> 0.0, "BB" -> 0.0, "CC" -> 0.0, "DD" -> 0.0, "EE" -> 0.0, "FF" -> 0.0, "GG" -> 0.0)
-      ) == statTransaction)
-  }
-
-  test("Process step by step") {
-    val givenTransaction = Transaction("any","accA",6,"BB",20000)
-    val givenStatWindow = List()
-
-    val stat = OpTransactions.processWindowByTransaction(givenTransaction, givenStatWindow)
+    val statTransaction: StatQ3 = OpTransactions.processWindowByTransaction(givenTransaction, givenWindowStatsForTransaction)
 
     assert(
-      StatQ3(
-        6,
-        "accA",
-        max = 0.0,
-        total = 0.0,
-        fromNItems = 0,
-        Map("AA" -> 0.0, "BB" -> 0.0, "CC" -> 0.0, "DD" -> 0.0, "EE" -> 0.0, "FF" -> 0.0, "GG" -> 0.0)
-      ) == stat)
+      StatQ3(8,"accA",max = 0, total = 0, fromNItems = 0, catAA = 0, catCC = 0, catFF = 0)
+        == statTransaction)
   }
 
-  test("I can obtain the new stat for the new transaction from the previous window") {
-    val givenTransaction = Transaction("any","accA",6,"BB",20000)
-    val givenWindow = List(
-      StatQ3(1,"accA",150.0,20.0,4,Map("AA" -> 5.0, "BB" -> 20000.0, "CC" -> 0.0, "DD" -> 0.0, "EE" -> 0.0, "FF" -> 0.0, "GG" -> 0.0)),
-      StatQ3(3,"accA",100.0,100.0,3,Map("AA" -> 100.0, "BB" -> 20000.0, "CC" -> 0.0, "DD" -> 0.0, "EE" -> 0.0, "FF" -> 0.0, "GG" -> 0.0)),
-      StatQ3(5,"accA",500.0,55.0,5,Map("AA" -> 1.0, "BB" -> 20000.0, "CC" -> 0.0, "DD" -> 0.0, "EE" -> 0.0, "FF" -> 0.0, "GG" -> 0.0))
+  test("For a transaction with no-empty window") {
+    val givenTransaction = Transaction("any","accA",8,"BB",100)
+    val givenWindowStatsForTransaction = List(
+      StatQ3(3, "accA", max = 20, total = 20, fromNItems = 3, catAA = 10, catCC = 50, catFF=100),
+      StatQ3(5, "accA", max = 30, total = 50, fromNItems = 2, catAA = 20, catCC = 150, catFF=2000),
+      StatQ3(6, "accA", max = 50, total = 100, fromNItems = 1,catAA = 30, catCC = 250, catFF=30000),
     )
 
-    val stat: StatQ3 = OpTransactions.processWindowByTransaction(givenTransaction, givenWindow)
+    val statTransaction: StatQ3 = OpTransactions.processWindowByTransaction(givenTransaction, givenWindowStatsForTransaction)
 
     assert(
-      StatQ3(
-        day = 6,
-        account = "accA",
-        max = 500.0,
-        total = 175.0,
-        fromNItems = 12,
-        Map("AA" -> 106.0, "BB" -> 0.0, "CC" -> 0.0, "DD" -> 0.0, "EE" -> 0.0, "FF" -> 0.0, "GG" -> 0.0)
-      ) == stat)
+      StatQ3(8,"accA",max = 50.0, total = 170.0, fromNItems = 6, catAA = 60, catCC = 450, catFF = 32100)
+      == statTransaction)
   }
 }

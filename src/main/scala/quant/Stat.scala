@@ -25,16 +25,40 @@ final case class StatQ3(
       max: Double,
       total: Double,
       fromNItems: Int,
-      categoryMapTotal: Map[String, Double] = Map("AA" -> 0.0, "BB" -> 0.0, "CC" -> 0.0, "DD" -> 0.0, "EE" -> 0.0, "FF" -> 0.0, "GG" -> 0.0)
+      catAA: Double,
+      catCC: Double,
+      catFF: Double
   ) extends Stat {
-  override def toString(): String = {
-    s"""
-       |Stat3($day,"$account",$max,$total,$fromNItems,Map("AA" -> ${categoryMapTotal("AA")}, "BB" -> ${categoryMapTotal("BB")}, "CC" -> ${categoryMapTotal("CC")}, "DD" -> ${categoryMapTotal("DD")}, "EE" -> ${categoryMapTotal("EE")}, "FF" -> ${categoryMapTotal("FF")}, "GG" -> ${categoryMapTotal("GG")}))[""".stripMargin
-  }
 
   def toTable(): String = {
     val avg = total / fromNItems
     s"""
-       |$day|$account|$max|$avg|${categoryMapTotal("AA")}|${categoryMapTotal("CC")}|${categoryMapTotal("FF")}""".stripMargin
+       |$day|$account|$max|$avg|$catAA|$catCC|$catFF""".stripMargin
+  }
+
+  def updateWithTransaction(transaction: Transaction): StatQ3 = {
+    StatQ3(
+      this.day,
+      this.account,
+      List(this.max, transaction.transactionAmount).max,
+      this.total + transaction.transactionAmount,
+      this.fromNItems + 1,
+      {if(transaction.category == "AA") this.catAA + transaction.transactionAmount else this.catAA},
+      {if(transaction.category == "CC") this.catCC + transaction.transactionAmount else this.catCC},
+      {if(transaction.category == "FF") this.catFF + transaction.transactionAmount else this.catFF},
+    )
+  }
+
+  def sumUp(withStat: StatQ3): StatQ3 = {
+    StatQ3(
+      this.day,
+      this.account,
+      List(this.max, withStat.max).max,
+      this.total + withStat.total,
+      this.fromNItems + withStat.fromNItems,
+      this.catAA + withStat.catAA,
+      this.catCC + withStat.catCC,
+      this.catFF + withStat.catFF
+    )
   }
 }
