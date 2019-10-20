@@ -14,7 +14,6 @@ object Question3 extends IOApp {
       case values => analyze(
           transactions.tail,
           OpTransactions.processTransactionInWindow(
-            getKeyWindow(transactions.head),
             transactions.head,
             statsAcumulator)
         )

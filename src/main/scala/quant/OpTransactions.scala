@@ -27,7 +27,8 @@ object OpTransactions {
     }
   }
 
-  def processTransactionInWindow(key: KeyWindow, trans: Transaction, statAcc: Map[KeyWindow, StatQ3]): Map[KeyWindow, StatQ3] = {
+  def processTransactionInWindow(trans: Transaction, statAcc: Map[KeyWindow, StatQ3]): Map[KeyWindow, StatQ3] = {
+    val key = getKeyWindow(trans)
     val stat = statAcc.get(key)
 
     stat match {
@@ -39,7 +40,9 @@ object OpTransactions {
   }
 
   def getKeyWindow(transaction: Transaction): KeyWindow = {
-    val windowKey = transaction.transactionDay-1 + "-" + (transaction.transactionDay-5)
+    val lowBoundary = transaction.transactionDay-5
+    val windowKey = transaction.transactionDay-1 + "-" + {if(lowBoundary < 0 ) 0 else lowBoundary}
+
     KeyWindow(windowKey, transaction.accountId)
   }
 }
