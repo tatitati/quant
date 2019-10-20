@@ -1,13 +1,18 @@
 package quant
 
+import cats.data.{EitherT}
 import cats.effect._
-import cats.syntax.all._
+import quant.RepositoryTransactions.{ListTransaction, OrListTransaction}
+import cats.implicits._
+
 import scala.annotation.tailrec
 
 object Question1 extends IOApp {
 
+  type DayMapStat = Map[Int, StatByDay]
+
   @tailrec
-  def analyze(transactions: List[Transaction], statsAcumulator: Map[Int, StatByDay] = Map()): Map[Int, StatByDay] = {
+  def analyze(transactions: List[Transaction], statsAcumulator: DayMapStat = Map()): DayMapStat = {
     transactions match {
       case Nil => statsAcumulator
       case _ => analyze(
@@ -17,15 +22,16 @@ object Question1 extends IOApp {
   }
 
   override def run(args: List[String]): IO[ExitCode] = {
-    val transactions: List[Transaction] = RepositoryTransactions.findAll("/transactions.txt")
+    val transactions: IO[Either[ErrorRead, ListTransaction]] = RepositoryTransactions.findAll("/transactions.txt")
 
-    val stats = analyze(transactions)
-    val tableText = Render.run(stats.values.toList.sortBy(_.day),
-      """
-        |Day|Total""".stripMargin)
+    val stats: IO[Either[ErrorRead, DayMapStat]] = EitherT(transactions).map(analyze(_)).value
 
+    val body = EitherT(stats).map((x: DayMapStat) =>
+      Render.run(x.values.toList, "\nDay|Total\n")
+    ).value
 
-    IO{println(tableText)}.as(ExitCode.Success)
+    println(body.unsafeRunSync())
+    IO{println("asdf")}.as(ExitCode.Success)
   }
 }
 

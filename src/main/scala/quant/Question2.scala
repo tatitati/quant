@@ -17,14 +17,15 @@ object Question2 extends IOApp {
   }
 
   override def run(args: List[String]): IO[ExitCode] = {
-    val transactions: List[Transaction] = RepositoryTransactions.findAll("/transactions.txt")
-
-    val stats = analyze(transactions)
-    val tableText = Render.run(stats.values.toList.sortBy(_.account),
-      """
-        |Account|Category|Avg""".stripMargin)
-
-    IO{println(tableText)}.as(ExitCode.Success)
+//    val transactions: List[Transaction] = RepositoryTransactions.findAll("/transactions.txt")
+//
+//    val stats = analyze(transactions)
+//    val tableText = Render.run(stats.values.toList.sortBy(_.account),
+//      """
+//        |Account|Category|Avg""".stripMargin)
+//
+//    IO{println(tableText)}.as(ExitCode.Success)
+    IO{println("asdfasdf")}.as(ExitCode.Success)
   }
 }
 

@@ -8,8 +8,9 @@ import scala.util.{Success, Try}
 object RepositoryTransactions {
 
   type ListTransaction = List[Transaction]
+  type OrListTransaction = Either[ErrorRead, ListTransaction]
 
-  def findAll(resourceFilename: String): IO[Either[ErrorRead, ListTransaction]] = IO {
+  def findAll(resourceFilename: String): IO[OrListTransaction] = IO {
     val file = getClass.getResource(resourceFilename)
 
     val transactions: Try[List[Transaction]] = Try {
