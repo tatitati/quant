@@ -4,27 +4,30 @@ import org.scalatest.FunSuite
 import quant.{OpTransactions, StatQ2, Transaction}
 
 class SumByAccountAndCategorySpec extends FunSuite{
-  test("question2 concept") {
-    val statsA = OpTransactions.processByAccountAndCatNewTransaction(
+  test("Creates a new stat if there is no info for the new transaction") {
+    val stat = OpTransactions.processByAccountAndCatNewTransaction(
       Transaction("any","accA",1,"cat1",20000)
     )
 
-    val statsB = OpTransactions.processByAccountAndCatNewTransaction(
-      Transaction("any","accB",1,"cat1",10000), statsA
+    assert(
+      Map(("accA","cat1") -> StatQ2("accA","cat1",20000.0,1))
+      == stat)
+  }
+
+  test("Can update the proper stat when received a new transaction") {
+    val givenTransaction = Transaction("any","accA",1,"cat1",20000)
+    val givenStats = Map(
+      ("accA","cat1") -> StatQ2("accA","cat1",20888.0,2),
+      ("accA","cat2") -> StatQ2("accA","cat2",555.0,1)
     )
 
-    val statsC = OpTransactions.processByAccountAndCatNewTransaction(
-      Transaction("any","accA",1,"cat1",888), statsB
-    )
-
-    val statsD = OpTransactions.processByAccountAndCatNewTransaction(
-      Transaction("any","accA",1,"cat2",555), statsC
+    val result = OpTransactions.processByAccountAndCatNewTransaction(
+      givenTransaction, givenStats
     )
 
     assert(Map(
-      ("accB","cat1") -> StatQ2("accB","cat1",10000.0,1),
-      ("accA","cat1") -> StatQ2("accA","cat1",20888.0,2),
-      ("accA","cat2") -> StatQ2("accA","cat2",555.0,1))
-      == statsD)
+      ("accA","cat2") -> StatQ2("accA","cat2",555.0,1),
+      ("accA","cat1") -> StatQ2("accA","cat1",40888.0,3) // updated
+    ) == result)
   }
 }
