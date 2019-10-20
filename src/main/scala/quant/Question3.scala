@@ -27,12 +27,13 @@ object Question3 extends IOApp {
 
     val stats: IO[Either[ErrorRead, WindowMapStat]] = EitherT(transactions).map(analyze(_)).value
 
-    val tableText = EitherT(stats).map((x: WindowMapStat) =>
+    val tableText: IO[Either[ErrorRead, String]] = EitherT(stats).map((x: WindowMapStat) =>
       Render.run(x.values.toList.sortBy(_.day), "\n|Day|Account|Max|Avg|AAcat|CCcat|FFcat\n")
     ).value
 
-    println(tableText.unsafeRunSync())
-    IO{println("tableText")}.as(ExitCode.Success)
+    val output: IO[Either[ErrorRead, Unit]] = EitherT(tableText).map(x=> println(x)).value
+
+    output.as(ExitCode.Success)
   }
 }
 

@@ -30,8 +30,8 @@ object Question1 extends IOApp {
       Render.run(x.values.toList.sortBy(_.day), "\nDay|Total\n")
     ).value
 
-    println(tableText.unsafeRunSync())
-    IO{println("asdf")}.as(ExitCode.Success)
+    val output: IO[Either[ErrorRead, Unit]] = EitherT(tableText).map(x=> println(x)).value
+    output.as(ExitCode.Success)
   }
 }
 

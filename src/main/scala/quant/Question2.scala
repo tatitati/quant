@@ -30,8 +30,8 @@ object Question2 extends IOApp {
       Render.run(x.values.toList.sortBy(_.account), "\nAccount|Category|Avg\n")
     ).value
 
-    println(tableText.unsafeRunSync())
-    IO{println("asdfasdf")}.as(ExitCode.Success)
+    val output: IO[Either[ErrorRead, Unit]] = EitherT(tableText).map(x=> println(x)).value
+    output.as(ExitCode.Success)
   }
 }
 
