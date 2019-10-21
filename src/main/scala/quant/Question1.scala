@@ -25,7 +25,7 @@ object Question1 extends IOApp {
 
     val output: IO[Either[ErrorRead, Unit]] = EitherT(transactions).map{x: List[Transaction] =>
       val stats: DayMapStat = analyze(x)
-      val body: String = Render.run(stats.values.toList.sortBy(_.day), "\nDay|Total\n")
+      val body: String = Render.run(stats.values.toList.sortBy(_.day), "\nDay|Total")
       println(body)
     }.value
 

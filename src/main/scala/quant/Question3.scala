@@ -25,7 +25,7 @@ object Question3 extends IOApp {
 
     val output: IO[Either[ErrorRead, Unit]] = EitherT(transactions).map{ x: ListTransaction =>
       val stats: WindowMapStat = analyze(x)
-      val textBody: String = Render.run(stats.values.toList.sortBy(_.day), "\n|Day|Account|Max|Avg|AAcat|CCcat|FFcat\n")
+      val textBody: String = Render.run(stats.values.toList.sortBy(_.day), "\n|Day|Account|Max|Avg|AAcat|CCcat|FFcat")
       println(textBody)
     }.value
 

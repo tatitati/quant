@@ -7,8 +7,7 @@ sealed trait Stat {
 
 final case class StatByDay(day: Int, total: Double) extends Stat{
   def toTable(): String = {
-    s"""
-       |$day|$total""".stripMargin
+    s"\n$day|$total"
   }
 
   def updateWithTransaction(transaction: Transaction): StatByDay = {
@@ -22,8 +21,7 @@ final case class StatByDay(day: Int, total: Double) extends Stat{
 final case class StatByAccCat(account: String, category: String, total: Double, fromNItems: Int) extends Stat{
   def toTable(): String = {
     val avg = total/fromNItems
-    s"""
-       |$account|$category|$avg""".stripMargin
+    s"\n$account|$category|$avg"
   }
 
   def updateWithTransaction(transaction: Transaction): StatByAccCat = {
@@ -49,9 +47,7 @@ final case class StatByWindowAcc(
 
   def toTable(): String = {
     val avg = if(fromNItems == 0) 0 else total / fromNItems
-
-    s"""
-       |$day|$account|$max|$avg|$catAA|$catCC|$catFF""".stripMargin
+    s"\n$day|$account|$max|$avg|$catAA|$catCC|$catFF"
   }
 
   def updateWithTransaction(transaction: Transaction): StatByWindowAcc = {
